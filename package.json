@@ -1,0 +1,23 @@
+{
+  "name": "venus",
+  "version": "1.0.0",
+  "description": "a three js micro game engine",
+  "license": "ISC",
+  "author": "sagitauros studio",
+  "type": "commonjs",
+  "main": "index.ts",
+  "exports": {
+    ".": "./dist/index.ts"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/three": "^0.177.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "three": "^0.177.0"
+  }
+}
