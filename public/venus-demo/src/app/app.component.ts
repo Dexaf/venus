@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SetupRenderer } from '../../../../dist/lib/render/render';
 import { VenusRenderer } from '../../../../dist/lib/render/render.class';
 import * as THREE from 'three';
+import { IBehaviourObject } from '../../../../dist/lib/behaviourObject/behaviourObject.interface';
 
 @Component({
   selector: 'app-root',
@@ -41,21 +42,36 @@ export class AppComponent implements OnInit {
         map: texture,
         side: THREE.DoubleSide,
       });
-      const plane = new THREE.Mesh(planeGeo, planeMat);
-      plane.rotation.x = Math.PI * -0.5;
-      plane.position.y = -0.5;
+      const plane = {
+        obj: new THREE.Mesh(planeGeo, planeMat),
+      } as IBehaviourObject<THREE.Object3D>;
+      plane.obj.rotation.x = Math.PI * -0.5;
+      plane.obj.position.y = -0.5;
       this.renderer.AddObject3D('plane_0', plane);
 
       const cubeSize = 1;
       const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
       const cubeMat = new THREE.MeshPhongMaterial({ color: '#8AC' });
-      const cube = new THREE.Mesh(cubeGeo, cubeMat);
+      const cube: IBehaviourObject<THREE.Object3D> = {
+        obj: new THREE.Mesh(cubeGeo, cubeMat),
+        BeforeRender: (delta) => {
+          cube.obj.position.x = Math.sin(this.renderer!.GetTimeFromStart());
+        },
+      };
       this.renderer.AddObject3D('cube_0', cube);
 
       const color = 0x00fff0;
       const intensity = 2;
-      const light = new THREE.AmbientLight(color, intensity);
+      const light = {
+        obj: new THREE.AmbientLight(color, intensity),
+      } as IBehaviourObject<THREE.Light>;
       this.renderer.AddLights('ambient_0', light);
+
+      this.renderer.AddAudioListener(new THREE.AudioListener());
+      this.renderer.AddAudio({
+        path: 'assets/sample.ogg',
+        positionalConfig: { refDistance: 200, meshToAttachKey: 'cube_0' },
+      });
     }
   }
 }
