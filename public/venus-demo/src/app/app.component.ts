@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { SetupRenderer } from '../../../../dist/lib/render/render';
-import { VenusRenderer } from '../../../../dist/lib/render/render.class';
+import { SetupRenderer } from '../../../../dist/lib/renderer/setupRenderer';
+import { VenusRenderer } from '../../../../dist/lib/renderer/venusRenderer';
 import * as THREE from 'three';
-import { IBehaviourObject } from '../../../../dist/lib/behaviourObject/behaviourObject.interface';
+import { IBehaviourObject } from '../../../../dist/lib/interfaces/behaviourObject.interface';
 
 @Component({
   selector: 'app-root',

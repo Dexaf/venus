@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { VenusRenderer } from "./render.class";
+import { VenusRenderer } from "./venusRenderer";
 
 export const SetupRenderer = (containerDiv: HTMLElement): VenusRenderer => {
 	const height = containerDiv.clientHeight;

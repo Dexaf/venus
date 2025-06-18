@@ -29,9 +29,9 @@ export class VenusRenderer {
 	private timeFromStart = 0;
 	private clock: THREE.Clock | null = null;
 
-	constructor(_renderer: THREE.WebGLRenderer, _scene: THREE.Scene) {
-		this.renderer = _renderer;
-		this.scene = _scene;
+	constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene) {
+		this.renderer = renderer;
+		this.scene = scene;
 	}
 
 	//===============================
@@ -191,8 +191,8 @@ export class VenusRenderer {
 		const light = this.lights.get(key);
 		if (!light) throw new Error(`no light with name ${key}`);
 
-		this.lights.delete(key);
 		if (light.OnRemove) light.OnRemove();
+		this.lights.delete(key);
 
 		this.FlattenBehaviours(this.lightsBehaviourBefore, key, false);
 		this.FlattenBehaviours(this.lightsBehaviourAfter, key, false);
@@ -241,8 +241,8 @@ export class VenusRenderer {
 		const obj = this.objects3D.get(key);
 		if (!obj) throw new Error(`no object3D with name ${key}`);
 
-		this.objects3D.delete(key);
 		if (obj.OnRemove) obj.OnRemove();
+		this.objects3D.delete(key);
 
 		this.FlattenBehaviours(this.objects3DBehaviourBefore, key, false);
 		this.FlattenBehaviours(this.objects3DBehaviourAfter, key, false);
