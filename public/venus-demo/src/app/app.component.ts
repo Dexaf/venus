@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SetupRenderer } from '../../../../dist/lib/renderer/setupRenderer';
 import { VenusRenderer } from '../../../../dist/lib/renderer/venusRenderer';
+import { Terraform } from '../../../../dist/lib/terraform/terraform';
 import * as THREE from 'three';
 import { IBehaviourObject } from '../../../../dist/lib/interfaces/behaviourObject.interface';
 
@@ -12,7 +13,9 @@ import { IBehaviourObject } from '../../../../dist/lib/interfaces/behaviourObjec
 export class AppComponent implements OnInit {
   renderer: VenusRenderer | null = null;
 
-  ngOnInit() {
+  async ngOnInit() {
+    const terraform = new Terraform();
+    await terraform.LoadState('/assets/test.json');
     const containerDiv = document.getElementById('container');
     if (containerDiv) {
       this.renderer = SetupRenderer(containerDiv);

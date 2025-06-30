@@ -150,13 +150,13 @@ export class VenusRenderer {
 	// SECTION: Lights
 	//===============================
 	/** Adds a light with behaviour hooks */
-	public AddLights = (key: string, light: IBehaviourObject<THREE.Light>) => {
-		if (this.lights.has(key)) {
-			throw new Error(`key already used for light ${key}`);
+	public AddLights = (light: IBehaviourObject<THREE.Light>) => {
+		if (this.lights.has(light.key)) {
+			throw new Error(`key already used for light ${light.key}`);
 		}
 
-		light.obj.name = key;
-		this.lights.set(key, light);
+		light.obj.name = light.key;
+		this.lights.set(light.key, light);
 
 		if (!this.scene) {
 			throw new Error("no scene was added to render");
@@ -165,8 +165,8 @@ export class VenusRenderer {
 		if (light.OnAdd) light.OnAdd();
 
 		// Register before/after render callbacks if present
-		if (light.BeforeRender) this.FlattenBehaviours(this.lightsBehaviourBefore, key);
-		if (light.AfterRender) this.FlattenBehaviours(this.lightsBehaviourAfter, key);
+		if (light.BeforeRender) this.FlattenBehaviours(this.lightsBehaviourBefore, light.key);
+		if (light.AfterRender) this.FlattenBehaviours(this.lightsBehaviourAfter, light.key);
 	};
 
 	/** Retrieves a light behaviour object by key */
@@ -202,13 +202,13 @@ export class VenusRenderer {
 	// SECTION: 3D Objects
 	//===============================
 	/** Adds a 3D object with behaviour hooks */
-	public AddObject3D = (key: string, object3D: IBehaviourObject<THREE.Object3D>) => {
-		if (this.objects3D.has(key)) {
-			throw new Error(`key already used for objects3D ${key}`);
+	public AddObject3D = (object3D: IBehaviourObject<THREE.Object3D>) => {
+		if (this.objects3D.has(object3D.key)) {
+			throw new Error(`key already used for objects3D ${object3D.key}`);
 		}
 
-		object3D.obj.name = key;
-		this.objects3D.set(key, object3D);
+		object3D.obj.name = object3D.key;
+		this.objects3D.set(object3D.key, object3D);
 
 		if (!this.scene) {
 			throw new Error("no scene was added to render");
@@ -216,8 +216,8 @@ export class VenusRenderer {
 		this.scene.add(object3D.obj);
 		if (object3D.OnAdd) object3D.OnAdd();
 
-		if (object3D.BeforeRender) this.FlattenBehaviours(this.objects3DBehaviourBefore, key);
-		if (object3D.AfterRender) this.FlattenBehaviours(this.objects3DBehaviourAfter, key);
+		if (object3D.BeforeRender) this.FlattenBehaviours(this.objects3DBehaviourBefore, object3D.key);
+		if (object3D.AfterRender) this.FlattenBehaviours(this.objects3DBehaviourAfter, object3D.key);
 	};
 
 	/** Retrieves a 3D object behaviour by key */
