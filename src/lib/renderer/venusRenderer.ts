@@ -5,10 +5,15 @@ import { IAudioConfig } from "../interfaces/audioConfig.interface";
 export class VenusRenderer {
 	// Three.js WebGL renderer instance
 	private renderer: THREE.WebGLRenderer;
+
 	// Scene to render
 	public scene: THREE.Scene | null = null;
+
 	// Camera used for rendering
 	public camera: THREE.Camera | null = null;
+
+	// Maps for global vars of scene
+	public sceneState: Map<string, any> = new Map();
 
 	// Audio components
 	private audioListener: THREE.AudioListener | null = null;
