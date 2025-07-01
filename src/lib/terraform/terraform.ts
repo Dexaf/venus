@@ -74,6 +74,8 @@ export class Terraform {
 			gltfLoader.loadAsync((locatedBehaviourObject3D as ILocatedBehaviourObject3D).gltfPath).then((gltf) => {
 				const obj3D: IBehaviourObject<Object3D> = {
 					obj: gltf.scene,
+					animations: gltf.animations,
+					properties: locatedBehaviourObject3D.properties,
 					key: locatedBehaviourObject3D.key,
 					tag: locatedBehaviourObject3D.tag,
 					BeforeRender: locatedBehaviourObject3D.BeforeRender,
@@ -87,6 +89,7 @@ export class Terraform {
 		else {
 			const obj3D: IBehaviourObject<Object3D> = {
 				obj: (locatedBehaviourObject3D as IBehaviourPrimitiveObject3D).obj,
+				properties: locatedBehaviourObject3D.properties,
 				key: locatedBehaviourObject3D.key,
 				tag: locatedBehaviourObject3D.tag,
 				BeforeRender: locatedBehaviourObject3D.BeforeRender,
@@ -102,6 +105,7 @@ export class Terraform {
 	private loadLight(behaviourLight: IBehaviourLight) {
 		const light: IBehaviourObject<Light> = {
 			obj: behaviourLight.light,
+			properties: behaviourLight.properties,
 			key: behaviourLight.key,
 			tag: behaviourLight.tag,
 			BeforeRender: behaviourLight.BeforeRender,
