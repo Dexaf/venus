@@ -25,7 +25,7 @@ export class Terraform {
 		this._currentState = state;
 	}
 
-	LoadAndStartRenderer(htmlContainerId: string): VenusRenderer {
+	LoadRenderer(htmlContainerId: string): VenusRenderer {
 		if (this._currentState == null) throw new Error("the state of this instance of terraform is null");
 
 		const rendererContainer = document.getElementById(htmlContainerId);
@@ -59,8 +59,6 @@ export class Terraform {
 		}
 
 		return this._venusRenderer;
-		//TODO - maybe should stop the rendering till the base state is loaded to avoid null refs
-		//TODO - try to understand if a json loader make actually sense, prolly not, maybe just a system to lazyload needed things
 	}
 
 	private loadObj3D(locatedBehaviourObject3D: ILocatedBehaviourObject3D, gltfLoader: GLTFLoader) {
