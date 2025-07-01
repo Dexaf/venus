@@ -162,7 +162,7 @@ export class VenusRenderer {
 			throw new Error("no scene was added to render");
 		}
 		this.scene.add(light.obj);
-		if (light.OnAdd) light.OnAdd();
+		if (light.OnAdd) light.OnAdd(this);
 
 		// Register before/after render callbacks if present
 		if (light.BeforeRender) this.FlattenBehaviours(this.lightsBehaviourBefore, light.key);
@@ -191,7 +191,7 @@ export class VenusRenderer {
 		const light = this.lights.get(key);
 		if (!light) throw new Error(`no light with name ${key}`);
 
-		if (light.OnRemove) light.OnRemove();
+		if (light.OnRemove) light.OnRemove(this);
 		this.lights.delete(key);
 
 		this.FlattenBehaviours(this.lightsBehaviourBefore, key, false);
@@ -214,7 +214,7 @@ export class VenusRenderer {
 			throw new Error("no scene was added to render");
 		}
 		this.scene.add(object3D.obj);
-		if (object3D.OnAdd) object3D.OnAdd();
+		if (object3D.OnAdd) object3D.OnAdd(this);
 
 		if (object3D.BeforeRender) this.FlattenBehaviours(this.objects3DBehaviourBefore, object3D.key);
 		if (object3D.AfterRender) this.FlattenBehaviours(this.objects3DBehaviourAfter, object3D.key);
@@ -241,7 +241,7 @@ export class VenusRenderer {
 		const obj = this.objects3D.get(key);
 		if (!obj) throw new Error(`no object3D with name ${key}`);
 
-		if (obj.OnRemove) obj.OnRemove();
+		if (obj.OnRemove) obj.OnRemove(this);
 		this.objects3D.delete(key);
 
 		this.FlattenBehaviours(this.objects3DBehaviourBefore, key, false);
@@ -315,7 +315,7 @@ export class VenusRenderer {
 			if (!obj || !obj.BeforeRender) {
 				throw new Error(`can't run before behaviour for key ${key}`);
 			}
-			obj.BeforeRender(delta);
+			obj.BeforeRender(this, delta);
 		});
 
 		this.lightsBehaviourBefore.forEach((key) => {
@@ -323,7 +323,7 @@ export class VenusRenderer {
 			if (!light || !light.BeforeRender) {
 				throw new Error(`can't run before behaviour for light ${key}`);
 			}
-			light.BeforeRender(delta);
+			light.BeforeRender(this, delta);
 		});
 	}
 
@@ -334,7 +334,7 @@ export class VenusRenderer {
 			if (!obj || !obj.AfterRender) {
 				throw new Error(`can't run after behaviour for key ${key}`);
 			}
-			obj.AfterRender(delta);
+			obj.AfterRender(this, delta);
 		});
 
 		this.lightsBehaviourAfter.forEach((key) => {
@@ -342,7 +342,7 @@ export class VenusRenderer {
 			if (!light || !light.AfterRender) {
 				throw new Error(`can't run after behaviour for light ${key}`);
 			}
-			light.AfterRender(delta);
+			light.AfterRender(this, delta);
 		});
 	}
 }

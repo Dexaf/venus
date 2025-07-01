@@ -28,31 +28,45 @@ export class Terraform {
 		this._venusRenderer = SetupRenderer(rendererContainer);
 		if (!this._venusRenderer) throw new Error(`the renderer couldn't be launched`);
 
+		this.applyState();
+
+		return this._venusRenderer;
+	}
+
+	SetRenderer(venusRenderer: VenusRenderer) {
+		this._venusRenderer = venusRenderer;
+	}
+
+	ApplyStateToRenderer() {
+		if (this._currentState == null) throw new Error("the state of this instance of terraform is null");
+		if (!this._venusRenderer) throw new Error(`the renderer couldn't be launched`);
+		this.applyState();
+	}
+
+	private applyState() {
 		//CAMERA
-		this._venusRenderer.AddCamera(this._currentState.camera);
+		this._venusRenderer!.AddCamera(this._currentState!.camera);
 
 		//3D OBJS
 		{
 			const gltfLoader = new GLTFLoader();
-			for (let i = 0; i < this._currentState.objects.length; i++) {
-				this.loadObj3D(this._currentState.objects[i], gltfLoader);
+			for (let i = 0; i < this._currentState!.objects.length; i++) {
+				this.loadObj3D(this._currentState!.objects[i], gltfLoader);
 			}
 		}
 
 		//LIGHTS
-		for (let i = 0; i < this._currentState.lights.length; i++) {
-			this.loadLight(this._currentState.lights[i]);
+		for (let i = 0; i < this._currentState!.lights.length; i++) {
+			this.loadLight(this._currentState!.lights[i]);
 		}
 
 		//SOUNDS
-		if (this._currentState.audios.length > 1) {
-			this._venusRenderer.AddAudioListener(new AudioListener());
-			for (let i = 0; i < this._currentState.audios.length; i++) {
-				this._venusRenderer.AddAudio(this._currentState.audios[i]);
+		if (this._currentState!.audios.length > 1) {
+			this._venusRenderer!.AddAudioListener(new AudioListener());
+			for (let i = 0; i < this._currentState!.audios.length; i++) {
+				this._venusRenderer!.AddAudio(this._currentState!.audios[i]);
 			}
 		}
-
-		return this._venusRenderer;
 	}
 
 	private loadObj3D(locatedBehaviourObject3D: ILocatedBehaviourObject3D, gltfLoader: GLTFLoader) {
@@ -83,9 +97,5 @@ export class Terraform {
 		};
 
 		this._venusRenderer!.AddLights(light);
-	}
-
-	SetRenderer(venusRenderer: VenusRenderer) {
-		this._venusRenderer = venusRenderer;
 	}
 }
