@@ -15,12 +15,6 @@ export class Terraform {
 		if (state) this._currentState = state;
 	}
 
-	async LoadAsyncState(path: string) {
-		const response = await fetch(path);
-		const state = (await response.json()) as ITerraformState;
-		this._currentState = state;
-	}
-
 	LoadState(state: ITerraformState) {
 		this._currentState = state;
 	}
