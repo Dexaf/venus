@@ -8,7 +8,7 @@ export class VenusRenderer {
 	// Scene to render
 	public scene: THREE.Scene | null = null;
 	// Camera used for rendering
-	private camera: THREE.Camera | null = null;
+	public camera: THREE.Camera | null = null;
 
 	// Audio components
 	private audioListener: THREE.AudioListener | null = null;
@@ -40,6 +40,18 @@ export class VenusRenderer {
 	/** Assigns the camera to be used for rendering */
 	public AddCamera = (camera: THREE.Camera) => {
 		this.camera = camera;
+	};
+
+	/** Modifies current camera parameters */
+	public ModifyCamera = (cameraPartial: Partial<THREE.Camera>) => {
+		if (this.camera == null) {
+			throw new Error("can't modify camera as there's no camera");
+		}
+
+		this.camera = {
+			...cameraPartial,
+			...this.camera,
+		} as THREE.Camera;
 	};
 
 	//===============================
