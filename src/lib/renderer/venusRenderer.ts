@@ -7,7 +7,7 @@ export class VenusRenderer {
 	private renderer: THREE.WebGLRenderer;
 
 	// Scene to render
-	public scene: THREE.Scene | null = null;
+	private scene: THREE.Scene | null = null;
 
 	// Camera used for rendering
 	public camera: THREE.Camera | null = null;
