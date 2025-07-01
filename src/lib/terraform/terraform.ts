@@ -4,7 +4,7 @@ import { IBehaviourObject } from "../interfaces/behaviourObject.interface";
 import { SetupRenderer } from "../renderer/setupRenderer";
 import { VenusRenderer } from "../renderer/venusRenderer";
 import { AudioListener, Light, Object3D } from "three";
-import { IBehaviourLight, ILocatedBehaviourObject3D } from "../interfaces/terraformObjects.interface";
+import { IBehaviourLight, ILocatedBehaviourObject3D, IBehaviourPrimitiveObject3D } from "../interfaces/terraformObjects.interface";
 
 export class Terraform {
 	private _currentState: ITerraformState | null = null;
@@ -51,7 +51,7 @@ export class Terraform {
 		{
 			const gltfLoader = new GLTFLoader();
 			for (let i = 0; i < this._currentState!.objects.length; i++) {
-				this.loadObj3D(this._currentState!.objects[i], gltfLoader);
+				if (this._currentState!.objects[i]) this.loadObj3D(this._currentState!.objects[i], gltfLoader);
 			}
 		}
 
@@ -69,10 +69,24 @@ export class Terraform {
 		}
 	}
 
-	private loadObj3D(locatedBehaviourObject3D: ILocatedBehaviourObject3D, gltfLoader: GLTFLoader) {
-		gltfLoader.loadAsync(locatedBehaviourObject3D.gltfPath).then((gltf) => {
+	private loadObj3D(locatedBehaviourObject3D: IBehaviourPrimitiveObject3D | ILocatedBehaviourObject3D, gltfLoader: GLTFLoader) {
+		if ((locatedBehaviourObject3D as ILocatedBehaviourObject3D).gltfPath !== undefined)
+			gltfLoader.loadAsync((locatedBehaviourObject3D as ILocatedBehaviourObject3D).gltfPath).then((gltf) => {
+				const obj3D: IBehaviourObject<Object3D> = {
+					obj: gltf.scene,
+					key: locatedBehaviourObject3D.key,
+					tag: locatedBehaviourObject3D.tag,
+					BeforeRender: locatedBehaviourObject3D.BeforeRender,
+					AfterRender: locatedBehaviourObject3D.AfterRender,
+					OnAdd: locatedBehaviourObject3D.OnAdd,
+					OnRemove: locatedBehaviourObject3D.OnRemove,
+				};
+
+				this._venusRenderer!.AddObject3D(obj3D);
+			});
+		else {
 			const obj3D: IBehaviourObject<Object3D> = {
-				obj: gltf.scene,
+				obj: (locatedBehaviourObject3D as IBehaviourPrimitiveObject3D).obj,
 				key: locatedBehaviourObject3D.key,
 				tag: locatedBehaviourObject3D.tag,
 				BeforeRender: locatedBehaviourObject3D.BeforeRender,
@@ -82,7 +96,7 @@ export class Terraform {
 			};
 
 			this._venusRenderer!.AddObject3D(obj3D);
-		});
+		}
 	}
 
 	private loadLight(behaviourLight: IBehaviourLight) {
