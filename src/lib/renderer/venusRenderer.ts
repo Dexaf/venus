@@ -13,7 +13,11 @@ export class VenusRenderer {
 	public camera: THREE.Camera | null = null;
 
 	// Maps for global vars of scene
-	public sceneState: Map<string, any> = new Map();
+	// the key is the name of the var in the state
+	private sceneState: Map<string, any> = new Map();
+	//the key is the name of the var in the scene state
+	//the value is an object that handles the callbacks of an object for that var
+	private sceneStateOberservers: StateVarObservers = new Map();
 
 	// Audio components
 	private audioListener: THREE.AudioListener | null = null;
@@ -59,6 +63,102 @@ export class VenusRenderer {
 		} as THREE.Camera;
 	};
 
+	//===============================
+	// SECTION: Scene state
+	//===============================
+	/** Add or Modify a value for a key.
+	 *  Normally it triggers the callbacks for the key, if they exists */
+	public SetSceneState(key: string, value: any, shouldTriggerCallbacks = true) {
+		this.sceneState.set(key, value);
+		if (shouldTriggerCallbacks)
+			//trigger observers
+			this.CallStateVarCallbacks(key);
+	}
+
+	public GetSceneStateVarValue(key: string) {
+		return this.sceneState.get(key);
+	}
+
+	/** Remove a key from the state.
+	 *  Normally it removes the callbacks for the key */
+	public RemoveSceneState(key: string, value: any, shouldRemoveCallbacks = true) {
+		this.sceneState.set(key, value);
+		if (shouldRemoveCallbacks) this.RemoveSceneStateCallback(key);
+	}
+	//===============================
+	// SECTION: Scene state callback
+	//===============================
+	/** Sets a callback for the state var specified by the key for the obj specified by objKey;
+	 *  this means it either adds it or modify if the callbackKey already exists
+	 */
+	SetSceneStateCallback(stateVarKey: string, objKey: string, callbackKey: string, callback: Function) {
+		const stateVar = this.sceneState.get(stateVarKey);
+		if (stateVar == null) {
+			throw new Error(`can't add event callback to state var ${stateVarKey} as the state var can't be found`);
+		}
+
+		const stateVarObserversCallbacks = this.sceneStateOberservers.get(stateVarKey);
+
+		//create the entry of the callback
+		const observerCallback: ObserverCallback = new Map();
+		observerCallback.set(callbackKey, callback);
+
+		//if the var as no observers we set the first one
+		if (stateVarObserversCallbacks == null) {
+			//create the entry for the observer regarding the state var
+			const observerCallbacks: ObserverCallbacks = new Map();
+			observerCallbacks.set(objKey, observerCallback);
+
+			//set the observer for the state var
+			this.sceneStateOberservers.set(stateVarKey, observerCallbacks);
+		}
+		//if the var as observers...
+		else {
+			//...we check if our observer is there
+			let observerCallbacks = stateVarObserversCallbacks.get(objKey);
+
+			//if the var isn't observed by the object we set it up
+			if (observerCallbacks == null) {
+				observerCallbacks = new Map<string, Function>();
+			}
+
+			//TODO - check if by ref it's actually saving the data
+			observerCallbacks.set(callbackKey, callback);
+		}
+	}
+
+	/**
+	 * If callbackKey is specified the method removes it for the obj of objKey, else it removes all the callbacks for the object.
+	 * If not even objKey is specified all the callbacks for the state var are deleted and the entry is removed
+	 */
+	RemoveSceneStateCallback(stateVarKey: string, objKey: string | null = null, callbackKey: string | null = null) {
+		//if only stateVarKey is defined we delete the state vars observers
+		if (objKey == null) this.sceneStateOberservers.delete(stateVarKey);
+		else {
+			const observersCallbacks = this.sceneStateOberservers.get(stateVarKey);
+			if (observersCallbacks == null) throw new Error(`can't remove callback ${callbackKey} as state var ${stateVarKey} isn't found`);
+			//if callbackKey isn't defined we delete the obj observer
+			if (callbackKey == null) observersCallbacks.delete(objKey);
+			else {
+				const observerCallbacks = observersCallbacks.get(objKey);
+				if (observerCallbacks == null) throw new Error(`can't remove callback ${callbackKey} as observer ${objKey} isn't found`);
+				//if the callback is defined we delete the entry
+				observerCallbacks.delete(callbackKey);
+			}
+		}
+	}
+
+	CallStateVarCallbacks(key: string) {
+		const observersCallbacks = this.sceneStateOberservers.get(key);
+		if (observersCallbacks == null) throw new Error(`can't call callbacks for state var ${key} as it's not found`);
+
+		observersCallbacks.forEach((ocs) => {
+			ocs.forEach((oc) => {
+				//TODO - TEST TO SEE IF THIS REFERS TO VENUS RENDERER
+				oc.call(this);
+			});
+		});
+	}
 	//===============================
 	// SECTION: Audio
 	//===============================
