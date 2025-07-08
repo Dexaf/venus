@@ -13,17 +13,24 @@ import { Lerp } from '../utils/lerp';
 
 const characterKey = 'character_0';
 
-const getProperties = () => {
-  const map = new Map<string, any>();
-  map.set('speed', 5); // percentage/seconds
-  map.set('startSec', 0); //percentage
-  map.set('currSec', 0); //percentage
-  map.set('targSec', 0); //percentage
-  map.set('shouldMove', false);
-  map.set('timeToTarget', 0); // seconds
-  map.set('currTimeToTarget', 0); // seconds
+export interface ICharacterProperties {
+  speed: number;
+  startSec: number;
+  currSec: number;
+  targSec: number;
+  shouldMove: boolean;
+  timeToTarget: number;
+  currTimeToTarget: number;
+}
 
-  return map;
+const characterProperties: ICharacterProperties = {
+  speed: 5, // percentage/seconds
+  startSec: 0, // percentage
+  currSec: 0, // percentage
+  targSec: 0, // percentage
+  shouldMove: false,
+  timeToTarget: 0, // seconds
+  currTimeToTarget: 0, // seconds
 };
 
 const onAdd = (venusRenderer: VenusRenderer) => {
@@ -51,59 +58,60 @@ const onAdd = (venusRenderer: VenusRenderer) => {
 };
 
 const beforeRender = (venusRenderer: VenusRenderer, delta: number) => {
-  const thisObjRef = venusRenderer.GetObject3D(characterKey);
-  if (!thisObjRef) return;
-  const shouldMove = thisObjRef.properties!.get('shouldMove');
-  if (shouldMove) {
-    thisObjRef.properties!.set(
-      'currTimeToTarget',
-      thisObjRef.properties!.get('currTimeToTarget') + delta
+  const thisObjRef =
+    venusRenderer.GetObject3D<ICharacterProperties>(characterKey);
+  if (
+    !thisObjRef ||
+    !thisObjRef.properties ||
+    !thisObjRef.properties.shouldMove
+  )
+    return;
+
+  thisObjRef.properties.currTimeToTarget += delta;
+
+  if (
+    thisObjRef.properties.currTimeToTarget > thisObjRef.properties.timeToTarget
+  ) {
+    thisObjRef.properties.shouldMove = false;
+    thisObjRef.properties.timeToTarget = 0;
+    thisObjRef.properties.currTimeToTarget = 0;
+
+    const action = thisObjRef.animationMixer?.clipAction(
+      thisObjRef.animations![0]
     );
+    action!.fadeOut(0.25);
+    action!.paused = true;
+  } else {
+    const curve =
+      venusRenderer.GetSceneStateVarValue<CatmullRomCurve3>('curve');
+    const currPos = curve.getPointAt(thisObjRef.properties.currSec);
+    thisObjRef.properties.currSec = Lerp(
+      thisObjRef.properties.startSec,
+      thisObjRef.properties.targSec,
+      thisObjRef.properties.currTimeToTarget /
+        thisObjRef.properties.timeToTarget
+    );
+    const newPos = curve.getPointAt(thisObjRef.properties.currSec);
 
-    const currTimeToTarget = thisObjRef.properties!.get('currTimeToTarget');
-    const timeToTarget = thisObjRef.properties!.get('timeToTarget');
+    const direction = newPos.clone().sub(currPos);
+    direction.y = 0;
+    direction.normalize();
 
-    if (currTimeToTarget > timeToTarget) {
-      thisObjRef.properties!.set('shouldMove', false);
-      thisObjRef.properties!.set('timeToTarget', 0);
-      thisObjRef.properties!.set('currTimeToTarget', 0);
+    const forward = new Vector3(0, 0, 1);
+    let angle = forward.angleTo(direction);
+    const cross = forward.cross(direction);
+    const sign = cross.y < 0 ? -1 : 1;
 
-      const action = thisObjRef.animationMixer?.clipAction(
-        thisObjRef.animations![0]
-      );
-      action!.fadeOut(0.25);
-      action!.paused = true;
-    } else {
-      let currSec = thisObjRef.properties!.get('currSec');
-      const curve = venusRenderer.GetSceneStateVarValue('curve');
-      const currPos = curve.getPointAt(currSec);
-      const startSec = thisObjRef.properties!.get('startSec');
-      const targSec = thisObjRef.properties!.get('targSec');
-      thisObjRef.properties!.set(
-        'currSec',
-        Lerp(startSec, targSec, currTimeToTarget / timeToTarget)
-      );
-      currSec = thisObjRef.properties!.get('currSec');
-      const newPos = curve.getPointAt(currSec);
-
-      const direction = newPos.clone().sub(currPos);
-      direction.y = 0;
-      direction.normalize();
-      const forward = new Vector3(0, 0, 1);
-      let angle = forward.angleTo(direction);
-      const cross = forward.cross(direction);
-      const sign = cross.y < 0 ? -1 : 1;
-      angle = angle * sign;
-      thisObjRef.obj.position.set(newPos.x, newPos.y, newPos.z);
-      thisObjRef.obj.rotation.y = angle;
-    }
+    angle = angle * sign;
+    thisObjRef.obj.position.set(newPos.x, newPos.y, newPos.z);
+    thisObjRef.obj.rotation.y = angle;
   }
 };
 
 //MAIN EXPORT
 export const character: ILocatedBehaviourObject3D = {
   gltfPath: '/assets/gltf/character/character.gltf',
-  properties: getProperties(),
+  properties: characterProperties,
   key: characterKey,
   OnAdd: onAdd,
   BeforeRender: beforeRender,
@@ -111,41 +119,46 @@ export const character: ILocatedBehaviourObject3D = {
 
 //SECTION - utils functions
 export const OnScrollProgressUpdate = (venusRenderer: VenusRenderer) => {
-  const progress = venusRenderer.GetSceneStateVarValue('scroll_progress');
+  const progress =
+    venusRenderer.GetSceneStateVarValue<string>('scroll_progress');
   const catMullCurve = venusRenderer.GetSceneStateVarValue(
     'curve'
   ) as CatmullRomCurve3;
-  const thisObjRef = venusRenderer.GetObject3D(characterKey);
+  const thisObjRef =
+    venusRenderer.GetObject3D<ICharacterProperties>(characterKey);
 
   updateObjProperties(thisObjRef!, progress, catMullCurve);
   handleActionState(thisObjRef!);
 };
 
 const updateObjProperties = (
-  thisObjRef: IBehaviourObject<Object3D>,
+  thisObjRef: IBehaviourObject<Object3D, ICharacterProperties>,
   progress: string,
   catMullCurve: CatmullRomCurve3
 ) => {
-  thisObjRef.properties!.set('startSec', thisObjRef.properties!.get('currSec'));
-  thisObjRef.properties!.set('shouldMove', true);
-  thisObjRef.properties!.set('currTimeToTarget', 0);
-  thisObjRef.properties!.set('timeToTarget', 0);
+  if (!thisObjRef.properties) return;
+
+  thisObjRef.properties.startSec = thisObjRef.properties.currSec;
+  thisObjRef.properties.shouldMove = true;
+  thisObjRef.properties.currTimeToTarget = 0;
+  thisObjRef.properties.timeToTarget = 0;
 
   //there are 100 nodes in the spline
-  thisObjRef.properties!.set('targSec', progress);
+  thisObjRef.properties.targSec = Number.parseFloat(progress);
   const distance = CalcSplinePointsDistance(
-    thisObjRef.properties!.get('startSec'),
-    Number.parseFloat(progress),
+    thisObjRef.properties.startSec,
+    thisObjRef.properties.targSec,
     catMullCurve
   );
 
-  thisObjRef.properties!.set(
-    'timeToTarget',
-    Math.abs(Number.parseFloat(distance) / thisObjRef.properties!.get('speed'))
+  thisObjRef.properties.timeToTarget = Math.abs(
+    distance / thisObjRef.properties.speed
   );
 };
 
-const handleActionState = (thisObjRef: IBehaviourObject<Object3D>) => {
+const handleActionState = (
+  thisObjRef: IBehaviourObject<Object3D, ICharacterProperties>
+) => {
   const action = thisObjRef!.animationMixer!.clipAction(
     thisObjRef!.animations![0]
   );

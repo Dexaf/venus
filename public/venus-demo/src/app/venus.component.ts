@@ -48,9 +48,8 @@ export class VenusComponent implements OnInit {
       });
       const plane = {
         key: 'plane_0',
-        properties: new Map(),
         obj: new THREE.Mesh(planeGeo, planeMat),
-      } as IBehaviourObject<THREE.Object3D>;
+      } as IBehaviourObject<THREE.Object3D, null>;
       plane.obj.rotation.x = Math.PI * -0.5;
       plane.obj.position.y = -0.5;
       this.renderer.AddObject3D(plane);
@@ -58,9 +57,8 @@ export class VenusComponent implements OnInit {
       const cubeSize = 1;
       const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
       const cubeMat = new THREE.MeshPhongMaterial({ color: '#8AC' });
-      const cube: IBehaviourObject<THREE.Object3D> = {
+      const cube: IBehaviourObject<THREE.Object3D, null> = {
         key: 'cube_0',
-        properties: new Map(),
         obj: new THREE.Mesh(cubeGeo, cubeMat),
         BeforeRender: (delta) => {
           cube.obj.position.x = Math.sin(this.renderer!.GetTimeFromStart());
@@ -72,9 +70,8 @@ export class VenusComponent implements OnInit {
       const intensity = 2;
       const light = {
         key: 'ambient_0',
-        properties: new Map(),
         obj: new THREE.AmbientLight(color, intensity),
-      } as IBehaviourObject<THREE.Light>;
+      } as IBehaviourObject<THREE.Light, null>;
       this.renderer.AddLights(light);
 
       this.renderer.AddAudioListener(new THREE.AudioListener());
