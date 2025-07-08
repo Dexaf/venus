@@ -1,5 +1,5 @@
-import { DirectionalLight, Vector2 } from 'three';
-import { IBehaviourLight } from '../../../../../../dist/lib/interfaces/terraformObjects.interface';
+import { DirectionalLight, Light, Vector2 } from 'three';
+import { IBehaviourObject } from '../../../../../../dist/lib/interfaces/behaviourObject.interface';
 
 const lightKey = 'dir_light_0';
 
@@ -26,7 +26,7 @@ const getDirLight = () => {
   return dirLight;
 };
 
-export const dirLight: IBehaviourLight = {
-  light: getDirLight(),
+export const dirLight: IBehaviourObject<Light, any> = {
+  obj: getDirLight(),
   key: lightKey,
 };
