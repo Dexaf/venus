@@ -42,8 +42,8 @@ flowchart TD
 
     RemoveEntity --> HasOnRemoveMethod
     HasOnRemoveMethod -- Yes --> TriggerOnRemove --> RemoveFromScene --> Summary
-    HasOnRemoveMethod -- No --> RemoveFromScene --> Summary
-
+    HasOnRemoveMethod -- No --> RemoveFromScene
+    RemoveFromScene -- remove entry --> StateObserverMap
     Summary --> UpdateEventMethods
   end
 
