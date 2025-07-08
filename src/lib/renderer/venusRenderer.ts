@@ -378,6 +378,9 @@ export class VenusRenderer {
 	/** Internal animation callback for each frame */
 	private Animate() {
 		const delta = this.clock!.getDelta();
+		this.objects3D.forEach((o3D) => {
+			o3D.animationMixer?.update(delta);
+		});
 		this.timeFromStart += delta;
 
 		this.RunBehavioursBefore(delta);
