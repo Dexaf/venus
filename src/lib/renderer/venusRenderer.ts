@@ -106,7 +106,7 @@ export class VenusRenderer {
 		//if the var as no observers we set the first one
 		if (stateVarObserversCallbacks == null) {
 			//create the entry for the observer regarding the state var
-			const observerCallbacks: ObserverCallbacks = new Map();
+			const observerCallbacks: ObserversCallbacks = new Map();
 			observerCallbacks.set(objKey, observerCallback);
 
 			//set the observer for the state var
@@ -127,22 +127,36 @@ export class VenusRenderer {
 	}
 
 	/**
-	 * If callbackKey is specified the method removes it for the obj of objKey, else it removes all the callbacks for the object.
-	 * If not even objKey is specified all the callbacks for the state var are deleted and the entry is removed
+	 * It removes entries in the state callback map, the operation is done
+	 * depending by the params.
+	 * (observerKey): remove all the istances for the observer around the whole map
+	 * (stateVarKey): remove all the callbacks for the state var
+	 * (stateVarKey > observerKey): removes all the istances for the observer for the state var
+	 * (stateVarKey > observerKey > callbackKey): removes the callback for the observer of the state var
 	 */
-	RemoveSceneStateCallback(stateVarKey: string, objKey: string | null = null, callbackKey: string | null = null) {
+	RemoveSceneStateCallback(stateVarKey: string | null = null, observerKey: string | null = null, callbackKey: string | null = null) {
+		//if we have no specific state var to work with...
+		if (stateVarKey == null) {
+			if (observerKey == null) throw new Error("can't remove any callback with no usefull param to do so");
+			//...we want to delete all the entries for a specific observer
+			this.sceneStateOberservers.forEach((observersCallbacks) => {
+				observersCallbacks.delete(observerKey);
+			});
+		}
 		//if only stateVarKey is defined we delete the state vars observers
-		if (objKey == null) this.sceneStateOberservers.delete(stateVarKey);
 		else {
-			const observersCallbacks = this.sceneStateOberservers.get(stateVarKey);
-			if (observersCallbacks == null) throw new Error(`can't remove callback ${callbackKey} as state var ${stateVarKey} isn't found`);
-			//if callbackKey isn't defined we delete the obj observer
-			if (callbackKey == null) observersCallbacks.delete(objKey);
+			if (observerKey == null) this.sceneStateOberservers.delete(stateVarKey);
 			else {
-				const observerCallbacks = observersCallbacks.get(objKey);
-				if (observerCallbacks == null) throw new Error(`can't remove callback ${callbackKey} as observer ${objKey} isn't found`);
-				//if the callback is defined we delete the entry
-				observerCallbacks.delete(callbackKey);
+				const observersCallbacks = this.sceneStateOberservers.get(stateVarKey);
+				if (observersCallbacks == null) throw new Error(`can't remove callback ${callbackKey} as state var ${stateVarKey} isn't found`);
+				//if callbackKey isn't defined we delete the obj observer
+				if (callbackKey == null) observersCallbacks.delete(observerKey);
+				else {
+					const observerCallbacks = observersCallbacks.get(observerKey);
+					if (observerCallbacks == null) throw new Error(`can't remove callback ${callbackKey} as observer ${observerKey} isn't found`);
+					//if the callback is defined we delete the entry
+					observerCallbacks.delete(callbackKey);
+				}
 			}
 		}
 	}
@@ -311,6 +325,7 @@ export class VenusRenderer {
 
 		this.FlattenBehaviours(this.lightsBehaviourBefore, key, false);
 		this.FlattenBehaviours(this.lightsBehaviourAfter, key, false);
+		this.RemoveSceneStateCallback(null, key);
 	};
 
 	//===============================
@@ -361,6 +376,7 @@ export class VenusRenderer {
 
 		this.FlattenBehaviours(this.objects3DBehaviourBefore, key, false);
 		this.FlattenBehaviours(this.objects3DBehaviourAfter, key, false);
+		this.RemoveSceneStateCallback(null, key);
 	};
 
 	//===============================
