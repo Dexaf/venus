@@ -325,6 +325,7 @@ export class VenusRenderer {
 
 		this.FlattenBehaviours(this.lightsBehaviourBefore, key, false);
 		this.FlattenBehaviours(this.lightsBehaviourAfter, key, false);
+		this.RemoveSceneStateCallback(null, key);
 	};
 
 	//===============================
