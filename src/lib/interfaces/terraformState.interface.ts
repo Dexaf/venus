@@ -1,10 +1,11 @@
-import { IBehaviourLight, ILocatedBehaviourObject3D, IBehaviourPrimitiveObject3D } from "./terraformObjects.interface";
 import * as THREE from "three";
 import { IAudioConfig } from "./audioConfig.interface";
+import { IBehaviourObject } from "./behaviourObject.interface";
+import { Object3D, Light } from "three";
 
 export interface ITerraformState {
 	camera: THREE.Camera;
-	objects: (IBehaviourPrimitiveObject3D | ILocatedBehaviourObject3D)[];
-	lights: IBehaviourLight[];
+	objects: IBehaviourObject<Object3D, any>[];
+	lights: IBehaviourObject<Light, any>[];
 	audios: IAudioConfig[];
 }

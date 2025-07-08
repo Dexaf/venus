@@ -3,9 +3,10 @@ import { VenusRenderer } from "../renderer/venusRenderer";
 
 export interface IBehaviourObject<T, Y> {
 	obj: T;
+	key: string;
+	loadPath?: string;
 	animations?: AnimationClip[];
 	properties?: Y;
-	key: string;
 	animationMixer?: AnimationMixer;
 	tag?: string;
 	OnAdd?(venusRenderer: VenusRenderer): void;

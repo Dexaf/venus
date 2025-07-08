@@ -4,7 +4,6 @@ import { IBehaviourObject } from "../interfaces/behaviourObject.interface";
 import { SetupRenderer } from "../renderer/setupRenderer";
 import { VenusRenderer } from "../renderer/venusRenderer";
 import { AudioListener, Light, Object3D } from "three";
-import { IBehaviourLight, ILocatedBehaviourObject3D, IBehaviourPrimitiveObject3D } from "../interfaces/terraformObjects.interface";
 
 export class Terraform {
 	private _currentState: ITerraformState | null = null;
@@ -69,51 +68,17 @@ export class Terraform {
 		}
 	}
 
-	private loadObj3D(locatedBehaviourObject3D: IBehaviourPrimitiveObject3D | ILocatedBehaviourObject3D, gltfLoader: GLTFLoader) {
-		if ((locatedBehaviourObject3D as ILocatedBehaviourObject3D).gltfPath !== undefined)
-			gltfLoader.loadAsync((locatedBehaviourObject3D as ILocatedBehaviourObject3D).gltfPath).then((gltf) => {
-				const obj3D: IBehaviourObject<Object3D, any> = {
-					obj: gltf.scene,
-					animations: gltf.animations,
-					properties: locatedBehaviourObject3D.properties,
-					key: locatedBehaviourObject3D.key,
-					tag: locatedBehaviourObject3D.tag,
-					BeforeRender: locatedBehaviourObject3D.BeforeRender,
-					AfterRender: locatedBehaviourObject3D.AfterRender,
-					OnAdd: locatedBehaviourObject3D.OnAdd,
-					OnRemove: locatedBehaviourObject3D.OnRemove,
-				};
-
-				this._venusRenderer!.AddObject3D(obj3D);
+	private loadObj3D(behaviourObject3D: IBehaviourObject<Object3D, any>, gltfLoader: GLTFLoader) {
+		if (behaviourObject3D.loadPath !== undefined)
+			gltfLoader.loadAsync(behaviourObject3D.loadPath).then((gltf) => {
+				behaviourObject3D.obj = gltf.scene;
+				behaviourObject3D.obj.animations = gltf.animations;
+				this._venusRenderer!.AddObject3D(behaviourObject3D);
 			});
-		else {
-			const obj3D: IBehaviourObject<Object3D, any> = {
-				obj: (locatedBehaviourObject3D as IBehaviourPrimitiveObject3D).obj,
-				properties: locatedBehaviourObject3D.properties,
-				key: locatedBehaviourObject3D.key,
-				tag: locatedBehaviourObject3D.tag,
-				BeforeRender: locatedBehaviourObject3D.BeforeRender,
-				AfterRender: locatedBehaviourObject3D.AfterRender,
-				OnAdd: locatedBehaviourObject3D.OnAdd,
-				OnRemove: locatedBehaviourObject3D.OnRemove,
-			};
-
-			this._venusRenderer!.AddObject3D(obj3D);
-		}
+		else this._venusRenderer!.AddObject3D(behaviourObject3D);
 	}
 
-	private loadLight(behaviourLight: IBehaviourLight) {
-		const light: IBehaviourObject<Light, any> = {
-			obj: behaviourLight.light,
-			properties: behaviourLight.properties,
-			key: behaviourLight.key,
-			tag: behaviourLight.tag,
-			BeforeRender: behaviourLight.BeforeRender,
-			AfterRender: behaviourLight.AfterRender,
-			OnAdd: behaviourLight.OnAdd,
-			OnRemove: behaviourLight.OnRemove,
-		};
-
-		this._venusRenderer!.AddLights(light);
+	private loadLight(behaviourLight: IBehaviourObject<Light, any>) {
+		this._venusRenderer!.AddLights(behaviourLight);
 	}
 }

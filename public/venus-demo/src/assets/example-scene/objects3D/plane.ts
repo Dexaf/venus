@@ -1,5 +1,5 @@
-import { PlaneGeometry, MeshStandardMaterial, Mesh } from 'three';
-import { IBehaviourPrimitiveObject3D } from '../../../../../../dist/lib/interfaces/terraformObjects.interface';
+import { PlaneGeometry, MeshStandardMaterial, Mesh, Object3D } from 'three';
+import { IBehaviourObject } from '../../../../../../dist/lib/interfaces/behaviourObject.interface';
 
 const planeKey = 'plane';
 
@@ -15,7 +15,7 @@ const getPlane = () => {
   return plane;
 };
 
-export const plane: IBehaviourPrimitiveObject3D = {
+export const plane: IBehaviourObject<Object3D, any> = {
   key: planeKey,
   obj: getPlane(),
 };

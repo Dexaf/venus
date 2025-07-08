@@ -1,7 +1,6 @@
 import {
   AnimationMixer,
   CatmullRomCurve3,
-  Line,
   Object3D,
   Vector3,
 } from 'three';
