@@ -13,8 +13,19 @@ flowchart TD
 
   %% Scene Management
   subgraph Scene Management
+    %% Scene State Management
+    subgraph Scene State Management
+      AddStateVar[Add State Variable]
+      UpdateStateVar[Update State Variable]
+      UpdateStateVar[Update State Variable]
+      StateObserverMap[Map of observed state var <br/>and the object who <br/> observes with their <br/>callbacks]
+      AddStateVar -- only after --> UpdateStateVar
+      UpdateStateVar -- calls the callbacks --> StateObserverMap
+    end
+
     AddEntity[Add Light/Object3D]
     AddToScene[Add to scene]
+    AddObservCallback[Observe state var <br/>and add callback on update]
     HasOnAddMethod{On Add Method?}
     TriggerOnAdd[Fire On Create Method]
     RemoveEntity[Remove Light/Object3D]
@@ -25,6 +36,7 @@ flowchart TD
     Summary@{ shape: cross-circ, label: "Summary" }
 
     AddEntity --> AddToScene --> HasOnAddMethod
+    AddToScene --> AddObservCallback --> StateObserverMap
     HasOnAddMethod -- Yes --> TriggerOnAdd --> Summary
     HasOnAddMethod -- No --> Summary
 
