@@ -122,7 +122,6 @@ export class VenusRenderer {
 				observerCallbacks = new Map<string, Function>();
 			}
 
-			//TODO - check if by ref it's actually saving the data
 			observerCallbacks.set(callbackKey, callback);
 		}
 	}
@@ -154,7 +153,6 @@ export class VenusRenderer {
 
 		observersCallbacks.forEach((ocs) => {
 			ocs.forEach((oc) => {
-				//TODO - TEST TO SEE IF THIS REFERS TO VENUS RENDERER
 				oc.call(this);
 			});
 		});
