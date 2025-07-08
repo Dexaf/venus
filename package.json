@@ -1,7 +1,7 @@
 {
   "name": "venus",
-  "version": "1.0.0",
-  "description": "a three js micro game engine",
+  "version": "0.9.0",
+  "description": "a three js based framework",
   "license": "ISC",
   "author": "sagitauros studio",
   "type": "commonjs",
