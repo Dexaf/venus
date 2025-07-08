@@ -1,9 +1,9 @@
-import { GridHelper } from 'three';
-import { IBehaviourPrimitiveObject3D } from '../../../../../../dist/lib/interfaces/terraformObjects.interface';
+import { GridHelper, Object3D } from 'three';
+import { IBehaviourObject } from '../../../../../../dist/lib/interfaces/behaviourObject.interface';
 
 const debuGridKey = 'grid_0';
 
-export const debugGrid: IBehaviourPrimitiveObject3D = {
+export const debugGrid: IBehaviourObject<Object3D, any> = {
   obj: new GridHelper(150, 150),
   key: debuGridKey,
 };

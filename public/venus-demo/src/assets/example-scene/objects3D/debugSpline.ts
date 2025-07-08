@@ -4,8 +4,9 @@ import {
   BufferGeometry,
   LineBasicMaterial,
   Line,
+  Object3D,
 } from 'three';
-import { IBehaviourPrimitiveObject3D } from '../../../../../../dist/lib/interfaces/terraformObjects.interface';
+import { IBehaviourObject } from '../../../../../../dist/lib/interfaces/behaviourObject.interface';
 
 export const debugSplineKey = 'spline_0';
 
@@ -25,7 +26,7 @@ const GetDebugSpline = () => {
   return curvedObject;
 };
 
-export const debugSpline: IBehaviourPrimitiveObject3D = {
+export const debugSpline: IBehaviourObject<Object3D, any> = {
   obj: GetDebugSpline(),
   key: debugSplineKey,
 };
