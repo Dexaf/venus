@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Terraform } from '../../../../dist/lib/terraform/terraform';
 import { VenusRenderer } from '../../../../dist/lib/renderer/venusRenderer';
 import { ExampleSceneState } from '../assets/example-scene/example-scene-state';
-import { OrthographicCamera } from 'three';
+import { CatmullRomCurve3, OrthographicCamera } from 'three';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { catmullRomCurve3Params } from '../assets/example-scene/objects3D/debugSpline';
 
 @Component({
   selector: 'terraform-component',
@@ -21,12 +24,13 @@ export class TerraformComponent implements OnInit {
     this.venusRenderer = this.terraform.LoadRenderer(
       'terraform-rendered-container'
     );
-
     this.updateCameraFrustrum();
     this.venusRenderer.camera!.position.set(0, 10, 10);
     this.venusRenderer.camera!.lookAt(0, 0, 0);
 
+    this.loadSceneState();
     this.venusRenderer.StartRender();
+    this.loadGsapHooks();
   }
 
   private updateCameraFrustrum() {
@@ -40,5 +44,38 @@ export class TerraformComponent implements OnInit {
     (this.venusRenderer!.camera as OrthographicCamera).near = -30;
     (this.venusRenderer!.camera as OrthographicCamera).far = 2000;
     (this.venusRenderer!.camera as OrthographicCamera).updateProjectionMatrix();
+  }
+
+  loadSceneState() {
+    if (this.venusRenderer) {
+      this.venusRenderer.SetSceneState('scroll_progress', 0, false);
+      this.venusRenderer.SetSceneState(
+        'curve',
+        new CatmullRomCurve3(catmullRomCurve3Params),
+        false
+      );
+    }
+  }
+
+  private loadGsapHooks() {
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.to(
+      { a: 0 },
+      {
+        a: 1,
+        scrollTrigger: {
+          trigger: '#expander',
+          start: 'top top',
+          end: 'bottom bottom',
+          onUpdate: (self) => {
+            if (this.venusRenderer)
+              this.venusRenderer.SetSceneState(
+                'scroll_progress',
+                self.progress.toFixed(2)
+              );
+          },
+        },
+      }
+    );
   }
 }
