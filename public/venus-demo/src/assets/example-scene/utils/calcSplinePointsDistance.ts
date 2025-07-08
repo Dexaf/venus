@@ -4,7 +4,7 @@ export const CalcSplinePointsDistance = (
   Pi: number,
   Pf: number,
   curve: CatmullRomCurve3
-) => {
+): number => {
   let length = 0;
 
   //to allow to go back
@@ -23,5 +23,5 @@ export const CalcSplinePointsDistance = (
     length += point_a.distanceTo(point_b);
   }
 
-  return length.toFixed(2);
+  return Number.parseFloat(length.toFixed(2));
 };
