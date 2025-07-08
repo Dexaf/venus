@@ -72,7 +72,7 @@ export class Terraform {
 	private loadObj3D(locatedBehaviourObject3D: IBehaviourPrimitiveObject3D | ILocatedBehaviourObject3D, gltfLoader: GLTFLoader) {
 		if ((locatedBehaviourObject3D as ILocatedBehaviourObject3D).gltfPath !== undefined)
 			gltfLoader.loadAsync((locatedBehaviourObject3D as ILocatedBehaviourObject3D).gltfPath).then((gltf) => {
-				const obj3D: IBehaviourObject<Object3D> = {
+				const obj3D: IBehaviourObject<Object3D, any> = {
 					obj: gltf.scene,
 					animations: gltf.animations,
 					properties: locatedBehaviourObject3D.properties,
@@ -87,7 +87,7 @@ export class Terraform {
 				this._venusRenderer!.AddObject3D(obj3D);
 			});
 		else {
-			const obj3D: IBehaviourObject<Object3D> = {
+			const obj3D: IBehaviourObject<Object3D, any> = {
 				obj: (locatedBehaviourObject3D as IBehaviourPrimitiveObject3D).obj,
 				properties: locatedBehaviourObject3D.properties,
 				key: locatedBehaviourObject3D.key,
@@ -103,7 +103,7 @@ export class Terraform {
 	}
 
 	private loadLight(behaviourLight: IBehaviourLight) {
-		const light: IBehaviourObject<Light> = {
+		const light: IBehaviourObject<Light, any> = {
 			obj: behaviourLight.light,
 			properties: behaviourLight.properties,
 			key: behaviourLight.key,

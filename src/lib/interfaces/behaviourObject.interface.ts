@@ -1,10 +1,10 @@
 import { AnimationClip, AnimationMixer } from "three";
 import { VenusRenderer } from "../renderer/venusRenderer";
 
-export interface IBehaviourObject<T> {
+export interface IBehaviourObject<T, Y> {
 	obj: T;
 	animations?: AnimationClip[];
-	properties?: Map<string, any>;
+	properties?: Y;
 	key: string;
 	animationMixer?: AnimationMixer;
 	tag?: string;
