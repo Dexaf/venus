@@ -25,8 +25,8 @@ export class VenusRenderer {
 	private audios: Map<string, THREE.Audio<GainNode | PannerNode> | THREE.PositionalAudio> = new Map();
 
 	// Maps for lights and 3D objects with behavior interfaces
-	private lights: Map<string, IBehaviourObject<THREE.Light>> = new Map();
-	private objects3D: Map<string, IBehaviourObject<THREE.Object3D>> = new Map();
+	private lights: Map<string, IBehaviourObject<THREE.Light, any>> = new Map();
+	private objects3D: Map<string, IBehaviourObject<THREE.Object3D, any>> = new Map();
 
 	// Arrays of keys to track before/after render callbacks
 	private objects3DBehaviourBefore: string[] = [];
@@ -75,8 +75,8 @@ export class VenusRenderer {
 			this.CallStateVarCallbacks(key);
 	}
 
-	public GetSceneStateVarValue(key: string) {
-		return this.sceneState.get(key);
+	public GetSceneStateVarValue<T>(key: string) {
+		return this.sceneState.get(key) as T;
 	}
 
 	/** Remove a key from the state.
@@ -239,8 +239,8 @@ export class VenusRenderer {
 	// SECTION: Tagging
 	//===============================
 	/** Returns all lights and objects that match the specified tag */
-	public GetByTag = (tag: string): IBehaviourObject<THREE.Light | THREE.Object3D>[] => {
-		const result: IBehaviourObject<THREE.Light | THREE.Object3D>[] = [];
+	public GetByTag = (tag: string): IBehaviourObject<THREE.Light | THREE.Object3D, any>[] => {
+		const result: IBehaviourObject<THREE.Light | THREE.Object3D, any>[] = [];
 		this.objects3D.forEach((obj) => {
 			if (obj.tag === tag) result.push(obj);
 		});
@@ -251,7 +251,7 @@ export class VenusRenderer {
 	};
 
 	/** Deletes all lights and objects associated with the specified tag */
-	public DeleteByTag = (tag: string): IBehaviourObject<THREE.Light | THREE.Object3D>[] => {
+	public DeleteByTag = (tag: string): IBehaviourObject<THREE.Light | THREE.Object3D, any>[] => {
 		this.objects3D.forEach((obj, key) => {
 			if (obj.tag === tag) this.RemoveObject3D(key);
 		});
@@ -265,7 +265,7 @@ export class VenusRenderer {
 	// SECTION: Lights
 	//===============================
 	/** Adds a light with behaviour hooks */
-	public AddLights = (light: IBehaviourObject<THREE.Light>) => {
+	public AddLights = <T>(light: IBehaviourObject<THREE.Light, T>) => {
 		if (this.lights.has(light.key)) {
 			throw new Error(`key already used for light ${light.key}`);
 		}
@@ -285,12 +285,12 @@ export class VenusRenderer {
 	};
 
 	/** Retrieves a light behaviour object by key */
-	public GetLight = (key: string): IBehaviourObject<THREE.Light> | null => {
+	public GetLight = (key: string): IBehaviourObject<THREE.Light, any> | null => {
 		return this.lights.get(key) ?? null;
 	};
 
 	/** Modifies properties or callbacks of a given light */
-	public ModifyLight = (key: string, light: Partial<IBehaviourObject<THREE.Light>>) => {
+	public ModifyLight = (key: string, light: Partial<IBehaviourObject<THREE.Light, any>>) => {
 		const orig = this.lights.get(key);
 		if (!orig) throw new Error(`no light with name ${key}`);
 
@@ -317,7 +317,7 @@ export class VenusRenderer {
 	// SECTION: 3D Objects
 	//===============================
 	/** Adds a 3D object with behaviour hooks */
-	public AddObject3D = (object3D: IBehaviourObject<THREE.Object3D>) => {
+	public AddObject3D = (object3D: IBehaviourObject<THREE.Object3D, any>) => {
 		if (this.objects3D.has(object3D.key)) {
 			throw new Error(`key already used for objects3D ${object3D.key}`);
 		}
@@ -336,12 +336,12 @@ export class VenusRenderer {
 	};
 
 	/** Retrieves a 3D object behaviour by key */
-	public GetObject3D = (key: string): IBehaviourObject<THREE.Object3D> | null => {
+	public GetObject3D = <T>(key: string): IBehaviourObject<THREE.Object3D, T> | null => {
 		return this.objects3D.get(key) ?? null;
 	};
 
 	/** Modifies a 3D object’s properties or callbacks */
-	public ModifyObject3D = (key: string, object3D: Partial<IBehaviourObject<THREE.Object3D>>) => {
+	public ModifyObject3D = (key: string, object3D: Partial<IBehaviourObject<THREE.Object3D, any>>) => {
 		const orig = this.objects3D.get(key);
 		if (!orig) throw new Error(`no object3D with name ${key}`);
 
