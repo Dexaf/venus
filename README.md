@@ -1,17 +1,3 @@
-Focus Mode Behavior
-When the canvas is clicked, the browser enters focus mode via the Pointer Lock API.
-
-In focus mode:
-
-The mouse cursor is hidden and locked to the canvas.
-
-Mouse movement speed (movementX, movementY) is still captured, allowing for interaction even though the cursor doesn't move visibly.
-
-Arrow keys (← ↑ ↓ →) are disabled for scrolling, preventing unwanted page movement during interaction.
-
-When the user exits focus (e.g., by pressing Esc), the pointer lock is released, arrow key scrolling is restored, and visual indicators (like the canvas border) are reset.
-
-
 ```mermaid
 %%{init: {'flowchart': {'wrap': true, 'nodeSpacing': 50, 'rankSpacing': 50}}}%%
 flowchart TD
