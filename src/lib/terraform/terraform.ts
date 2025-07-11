@@ -43,6 +43,7 @@ export class Terraform {
 	}
 
 	private applyState() {
+		if (this._currentState!.camera == null) throw new Error("camera is obbligatory, in the interface it was left as optional to let the developer add one later with the height and width of the html container");
 		//CAMERA
 		this._venusRenderer!.AddCamera(this._currentState!.camera);
 
@@ -64,6 +65,14 @@ export class Terraform {
 			this._venusRenderer!.AddAudioListener(new AudioListener());
 			for (let i = 0; i < this._currentState!.audios.length; i++) {
 				this._venusRenderer!.AddAudio(this._currentState!.audios[i]);
+			}
+		}
+
+		//ROVER
+		if (this._currentState!.roverConfig.rover != null) {
+			this._venusRenderer!.DeployRover(this._currentState!.roverConfig.rover);
+			if (this._currentState!.roverConfig.activeController != null) {
+				this._venusRenderer!.ActivateRoverController(this._currentState!.roverConfig.activeController);
 			}
 		}
 	}
