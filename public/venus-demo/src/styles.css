@@ -12,3 +12,38 @@ h4,
 h5 {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+button {
+  border: 1px solid gray;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.navigator-container>a,
+button {
+  background-color: rgb(245, 245, 245);
+  padding: 1rem 2rem;
+  display: inline-block;
+  border-radius: 10px;
+  text-decoration: none;
+  color: black;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+.navigator-container>a.active {
+  background-color: rgb(0, 0, 0);
+  color: rgb(245, 245, 245);
+}
+
+.navigator-container>a:hover,
+button:hover {
+  background-color: rgb(12, 12, 12);
+  color: rgb(245, 245, 245);
+}
+
+.navigator-container>a:active,
+button:active {
+  background-color: rgb(0, 0, 0);
+  color: rgb(245, 245, 245);
+}

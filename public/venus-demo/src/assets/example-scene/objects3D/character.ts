@@ -1,10 +1,4 @@
-import {
-  AnimationMixer,
-  CatmullRomCurve3,
-  Object3D,
-  Vector3,
-} from 'three';
-import { ILocatedBehaviourObject3D } from '../../../../../../dist/lib/interfaces/terraformObjects.interface';
+import { AnimationMixer, CatmullRomCurve3, Object3D, Vector3 } from 'three';
 import { VenusRenderer } from '../../../../../../dist/lib/renderer/venusRenderer';
 import { CalcSplinePointsDistance } from '../utils/calcSplinePointsDistance';
 import { IBehaviourObject } from '../../../../../../dist/lib/interfaces/behaviourObject.interface';
@@ -36,13 +30,13 @@ const onAdd = (venusRenderer: VenusRenderer) => {
   const objRef = venusRenderer.GetObject3D(characterKey);
   if (!objRef) throw new Error(`can't find ${characterKey} in OnAdd`);
 
-  objRef.obj.position.set(-10, 0, -40);
+  objRef.obj!.position.set(-10, 0, -40);
 
-  objRef.obj.traverse((child) => {
+  objRef.obj!.traverse((child) => {
     child.castShadow = true;
   });
 
-  objRef.animationMixer = new AnimationMixer(objRef!.obj);
+  objRef.animationMixer = new AnimationMixer(objRef!.obj!);
   const action = objRef.animationMixer.clipAction(objRef.animations![0]);
   action.paused = true;
 
@@ -102,14 +96,14 @@ const beforeRender = (venusRenderer: VenusRenderer, delta: number) => {
     const sign = cross.y < 0 ? -1 : 1;
 
     angle = angle * sign;
-    thisObjRef.obj.position.set(newPos.x, newPos.y, newPos.z);
-    thisObjRef.obj.rotation.y = angle;
+    thisObjRef.obj!.position.set(newPos.x, newPos.y, newPos.z);
+    thisObjRef.obj!.rotation.y = angle;
   }
 };
 
 //MAIN EXPORT
-export const character: ILocatedBehaviourObject3D = {
-  gltfPath: '/assets/gltf/character/character.gltf',
+export const character: IBehaviourObject<Object3D, ICharacterProperties> = {
+  loadPath: '/assets/gltf/character/character.gltf',
   properties: characterProperties,
   key: characterKey,
   OnAdd: onAdd,

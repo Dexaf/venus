@@ -2,7 +2,7 @@ import { AnimationClip, AnimationMixer } from "three";
 import { VenusRenderer } from "../renderer/venusRenderer";
 
 export interface IBehaviourObject<T, Y> {
-	obj: T;
+	obj?: T;
 	key: string;
 	loadPath?: string;
 	animations?: AnimationClip[];

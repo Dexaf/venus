@@ -1,0 +1,30 @@
+#expander {
+  position: relative;
+  height: 50vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#logger {
+  box-shadow: inset -0.5px 1px 2px rgb(230, 230, 230), inset 1px -1px 2px rgb(175, 175, 175);
+  border-radius: 5px;
+  padding: 1rem 2rem;
+  background-color: white;
+  border: 1px solid rgb(212, 212, 212);
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+}
+
+#terraform-w-rover-rendered-container {
+  height: 100%;
+  width: 100%;
+}
+
+#ui {
+  text-align: center;
+  background-color: white;
+  padding: 2rem 0;
+}

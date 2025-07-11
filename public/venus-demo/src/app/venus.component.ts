@@ -50,8 +50,8 @@ export class VenusComponent implements OnInit {
         key: 'plane_0',
         obj: new THREE.Mesh(planeGeo, planeMat),
       } as IBehaviourObject<THREE.Object3D, null>;
-      plane.obj.rotation.x = Math.PI * -0.5;
-      plane.obj.position.y = -0.5;
+      plane.obj!.rotation.x = Math.PI * -0.5;
+      plane.obj!.position.y = -0.5;
       this.renderer.AddObject3D(plane);
 
       const cubeSize = 1;
@@ -61,7 +61,7 @@ export class VenusComponent implements OnInit {
         key: 'cube_0',
         obj: new THREE.Mesh(cubeGeo, cubeMat),
         BeforeRender: (delta) => {
-          cube.obj.position.x = Math.sin(this.renderer!.GetTimeFromStart());
+          cube.obj!.position.x = Math.sin(this.renderer!.GetTimeFromStart());
         },
       };
       this.renderer.AddObject3D(cube);
