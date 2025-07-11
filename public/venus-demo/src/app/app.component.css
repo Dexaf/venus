@@ -5,24 +5,3 @@
   background-color: rgb(0, 132, 255);
   padding: 1rem 0;
 }
-
-.navigator-container>a {
-  background-color: rgb(245, 245, 245);
-  padding: 1rem 2rem;
-  display: inline-block;
-  border-radius: 10px;
-  text-decoration: none;
-  color: black;
-  letter-spacing: 1px;
-  transition: all 0.2s;
-}
-
-.navigator-container>a.active {
-  background-color: rgb(0, 0, 0);
-  color: rgb(245, 245, 245);
-}
-
-.navigator-container>a:hover {
-  background-color: rgb(0, 0, 0);
-  color: rgb(245, 245, 245);
-}

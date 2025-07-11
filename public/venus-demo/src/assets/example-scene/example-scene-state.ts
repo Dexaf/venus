@@ -11,4 +11,8 @@ export const ExampleSceneState: ITerraformState = {
   objects: [new character(), plane, debugSpline, debugGrid],
   lights: [dirLight],
   audios: [],
+  roverConfig: {
+    rover: null,
+    activeController: null,
+  },
 };

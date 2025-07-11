@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
@@ -6,8 +6,10 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   template: `
     <div class="navigator-container">
       <a routerLink="/venus" routerLinkActive="active">venus</a>
-      <br />
       <a routerLink="/terraform" routerLinkActive="active">terraform</a>
+      <a routerLink="/rover_terraform" routerLinkActive="active"
+        >rover + terraform</a
+      >
     </div>
     <section class="renderer-wrapper">
       <router-outlet></router-outlet>
@@ -16,4 +18,6 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   styleUrl: './app.component.css',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  ngOnInit(): void {}
+}
