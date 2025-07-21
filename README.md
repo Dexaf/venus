@@ -25,26 +25,21 @@ flowchart TD
 
     AddEntity[Add Light/Object3D]
     AddToScene[Add to scene]
-    AddObservCallback[Observe state var <br/>and add callback on update]
-    HasOnAddMethod{On Add Method?}
     TriggerOnAdd[Fire On Create Method]
     RemoveEntity[Remove Light/Object3D]
     RemoveFromScene[Remove from scene]
-    HasOnRemoveMethod{On Remove Method?}
     TriggerOnRemove[Fire On Remove Method]
     UpdateEventMethods[Update lists of <br/><i>before</i> and <i>after</i> method<br/> to run]
     Summary@{ shape: cross-circ, label: "Summary" }
 
-    AddEntity --> AddToScene --> HasOnAddMethod
-    AddToScene --> AddObservCallback --> StateObserverMap
-    HasOnAddMethod -- Yes --> TriggerOnAdd --> Summary
-    HasOnAddMethod -- No --> Summary
-
-    RemoveEntity --> HasOnRemoveMethod
-    HasOnRemoveMethod -- Yes --> TriggerOnRemove --> RemoveFromScene --> Summary
-    HasOnRemoveMethod -- No --> RemoveFromScene
+    RemoveEntity --> TriggerOnRemove --> RemoveFromScene --> Summary
     RemoveFromScene -- remove entry --> StateObserverMap
     Summary --> UpdateEventMethods
+
+    AddEntity --> AddToScene --> TriggerOnAdd --> Summary
+    AddToScene -- add entry --> StateObserverMap
+
+    AddToScene -- check and load childrens --> AddEntity
   end
 
   %% EventMethod Lists
