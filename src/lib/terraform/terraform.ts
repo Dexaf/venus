@@ -1,9 +1,9 @@
 import { GLTFLoader } from "three/examples/jsm/Addons";
 import { ITerraformState } from "../interfaces/terraformState.interface";
-import { IBehaviourObject } from "../interfaces/behaviourObject.interface";
+import { IBehaviourObject, IBehaviourObjectChildren } from "../interfaces/behaviourObject.interface";
 import { SetupRenderer } from "../renderer/setupRenderer";
 import { VenusRenderer } from "../renderer/venusRenderer";
-import { AudioListener, Light, Object3D } from "three";
+import { AudioListener, Light, Object3D, Object3DEventMap } from "three";
 
 export class Terraform {
 	private _currentState: ITerraformState | null = null;
@@ -50,8 +50,12 @@ export class Terraform {
 		//3D OBJS
 		{
 			const gltfLoader = new GLTFLoader();
+			let currObj;
 			for (let i = 0; i < this._currentState!.objects.length; i++) {
-				if (this._currentState!.objects[i]) this.loadObj3D(this._currentState!.objects[i], gltfLoader);
+				currObj = this._currentState!.objects[i];
+				if (currObj) {
+					this.loadObj3D(currObj, gltfLoader);
+				}
 			}
 		}
 
@@ -83,8 +87,32 @@ export class Terraform {
 				behaviourObject3D.obj = gltf.scene;
 				behaviourObject3D.obj.animations = gltf.animations;
 				this._venusRenderer!.AddObject3D(behaviourObject3D);
+
+				//NOTE - we have load the child here because the load is async
+				if (behaviourObject3D.childrens != undefined) {
+					for (let j = 0; j < behaviourObject3D.childrens.length; j++) {
+						this.loadChildren(behaviourObject3D, behaviourObject3D.childrens[j], gltfLoader);
+					}
+				}
 			});
-		else this._venusRenderer!.AddObject3D(behaviourObject3D);
+		else {
+			this._venusRenderer!.AddObject3D(behaviourObject3D);
+
+			if (behaviourObject3D.childrens != undefined) {
+				for (let j = 0; j < behaviourObject3D.childrens.length; j++) {
+					this.loadChildren(behaviourObject3D, behaviourObject3D.childrens[j], gltfLoader);
+				}
+			}
+		}
+	}
+
+	private loadChildren(currObj: IBehaviourObject<Object3D<Object3DEventMap>, any>, child: IBehaviourObjectChildren<Object3D<Object3DEventMap>>, gltfLoader: GLTFLoader) {
+		currObj.obj?.traverse((t) => {
+			if (t.name == child.name) {
+				child.behaviour.obj = t;
+				this._venusRenderer!.AddObject3D(child.behaviour);
+			}
+		});
 	}
 
 	private loadLight(behaviourLight: IBehaviourObject<Light, any>) {
