@@ -1,6 +1,6 @@
 {
   "name": "@dexaf/venus",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "description": "a three js based framework",
   "homepage": "https://github.com/Dexaf/venus#readme",
   "bugs": {
@@ -13,11 +13,14 @@
   "license": "ISC",
   "author": "sagitauros studio",
   "type": "commonjs",
-  "exports": {
-    ".": "./dist/index.ts"
-  },
   "main": "index.ts",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "build": "tsc"
   },
