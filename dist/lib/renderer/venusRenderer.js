@@ -29,6 +29,12 @@ export class VenusRenderer {
         this.timeFromStart = 0;
         this.clock = null;
         //===============================
+        // SECTION: Scene
+        //===============================
+        this.SetSize = (width, height) => {
+            this.renderer.setSize(width, height);
+        };
+        //===============================
         // SECTION: Camera
         //===============================
         /** Assigns the camera to be used for rendering */

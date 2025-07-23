@@ -22,6 +22,7 @@ export declare class VenusRenderer {
     private timeFromStart;
     private clock;
     constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene);
+    SetSize: (width: number, height: number) => void;
     /** Assigns the camera to be used for rendering */
     AddCamera: (camera: THREE.Camera) => void;
     /** Modifies current camera parameters */

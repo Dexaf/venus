@@ -49,6 +49,13 @@ export class VenusRenderer {
 	}
 
 	//===============================
+	// SECTION: Scene
+	//===============================
+	public SetSize = (width: number, height: number) => {
+		this.renderer.setSize(width, height);
+	};
+
+	//===============================
 	// SECTION: Camera
 	//===============================
 	/** Assigns the camera to be used for rendering */
