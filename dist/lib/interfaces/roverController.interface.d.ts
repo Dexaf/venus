@@ -10,10 +10,9 @@ export interface IRoverController {
     name: string;
 }
 export interface IRoverInput {
-    type: "keyboard" | "pointer" | "pointermove";
+    type: "keyboard" | "pointer";
     value: string;
     alias: string;
     isTapped: boolean;
-    isPressed: boolean;
     event?: Event;
 }

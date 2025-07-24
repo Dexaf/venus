@@ -48,9 +48,6 @@ export class Rover {
                 case "pointer":
                     this.bindPointerInput(input, controller);
                     break;
-                case "pointermove":
-                    this.bindPointerInput(input, controller);
-                    break;
             }
         }
     }
@@ -60,15 +57,11 @@ export class Rover {
     bindKeyboardInput(input, controller) {
         const keyDown = (e) => {
             if (e.key == input.value) {
-                if ((input.isTapped = true)) {
-                    input.isPressed = true;
-                }
                 input.isTapped = true;
             }
         };
         const keyRelease = (e) => {
             if (e.key == input.value) {
-                input.isPressed = false;
                 input.isTapped = false;
             }
         };
@@ -82,15 +75,11 @@ export class Rover {
      */
     bindPointerInput(input, controller) {
         const pointerDown = (e) => {
-            if ((input.isTapped = true)) {
-                input.isPressed = true;
-            }
             input.isTapped = true;
             input.event = e;
         };
         const pointerUp = (e) => {
             input.isTapped = false;
-            input.isPressed = false;
             input.event = undefined;
         };
         document.addEventListener("pointerdown", pointerDown);
