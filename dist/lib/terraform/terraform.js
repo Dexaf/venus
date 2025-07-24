@@ -93,7 +93,7 @@ export class Terraform {
         }
     }
     loadChildren(currObj, child, gltfLoader) {
-        currObj.obj?.traverse((t) => {
+        currObj.obj?.children.forEach((t) => {
             if (t.name == child.name) {
                 child.behaviour.obj = t;
                 this._venusRenderer.AddObject3D(child.behaviour);

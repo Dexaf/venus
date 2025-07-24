@@ -52,6 +52,7 @@ export class RoverComponent implements OnInit, OnDestroy {
       last pressed key is NONE
       `;
     document.addEventListener('keydown', this.print);
+    document.addEventListener('pointerdown', this.printPointer);
   }
 
   private print(e: KeyboardEvent) {
@@ -59,8 +60,14 @@ export class RoverComponent implements OnInit, OnDestroy {
     div!.innerHTML = `last pressed key is ${e.key}`;
   }
 
+  private printPointer(e: PointerEvent) {
+    const div = document.getElementById('keyboard-log');
+    div!.innerHTML = `last pressed key is POINTER CLICK`;
+  }
+
   ngOnDestroy(): void {
     document.removeEventListener('keydown', this.print);
+    document.removeEventListener('pointerdown', this.printPointer);
     //removes events listeners
     this.venusRenderer?.RemoveRover();
   }

@@ -107,7 +107,7 @@ export class Terraform {
 	}
 
 	private loadChildren(currObj: IBehaviourObject<Object3D<Object3DEventMap>, any>, child: IBehaviourObjectChildren<Object3D<Object3DEventMap>>, gltfLoader: GLTFLoader) {
-		currObj.obj?.traverse((t) => {
+		currObj.obj?.children.forEach((t) => {
 			if (t.name == child.name) {
 				child.behaviour.obj = t;
 				this._venusRenderer!.AddObject3D(child.behaviour);

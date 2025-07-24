@@ -48,6 +48,12 @@ export class Scene implements IBehaviourObject<Object3D, sceneProperites> {
         <br/> 
         <b>Down is tapped</b>: ${aControllerRef.inputs[a.down].isTapped}
         from <b>${aControllerRef.inputs[a.down].value}</b>
+        <hr/>  
+        <b>Click is tapped</b>: ${aControllerRef.inputs[a.click].isTapped}
+        from <b>${aControllerRef.inputs[a.click].value}</b>
+        <br/> 
+        <b>Click is pressed</b>: ${aControllerRef.inputs[a.click].isPressed}
+        from <b>${aControllerRef.inputs[a.click].value}</b>
       `;
   }
 }

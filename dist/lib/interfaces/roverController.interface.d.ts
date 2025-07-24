@@ -14,5 +14,6 @@ export interface IRoverInput {
     value: string;
     alias: string;
     isTapped: boolean;
+    isPressed: boolean;
     event?: Event;
 }

@@ -7,12 +7,21 @@ export const secondController: IRoverController = {
       value: 'w',
       alias: 'up',
       isTapped: false,
+      isPressed: false
     },
     down: {
       type: 'keyboard',
       value: 's',
       alias: 'down',
       isTapped: false,
+      isPressed: false
+    },
+    click: {
+      type: 'pointer',
+      value: 'pointerdown',
+      alias: 'click',
+      isTapped: false,
+      isPressed: false
     },
   },
   disabled: false,
@@ -23,4 +32,5 @@ export const secondController: IRoverController = {
 export const defaultControllerActions = {
   up: 'up',
   down: 'down',
+  click: 'click',
 };
