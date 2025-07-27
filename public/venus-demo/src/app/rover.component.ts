@@ -79,7 +79,6 @@ export class RoverComponent implements OnInit, OnDestroy {
     const canvas = document.querySelector(
       '#terraform-w-rover-rendered-container>canvas'
     );
-    debugger
     this.venusRenderer?.ActivateRoverController(
       this.activeController,
       canvas as HTMLCanvasElement
