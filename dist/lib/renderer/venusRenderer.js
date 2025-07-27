@@ -436,9 +436,6 @@ export class VenusRenderer {
             if (idx !== -1) {
                 arrayToFlatten.splice(idx, 1);
             }
-            else if (throwError) {
-                throw new Error(`can't remove ${key}'s behaviour as it's not present`);
-            }
         }
     }
     /** Executes all registered BeforeRender callbacks */
