@@ -23,6 +23,7 @@ export declare class VenusRenderer {
     private clock;
     constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene);
     SetSize: (width: number, height: number) => void;
+    GetCanvas: () => HTMLCanvasElement;
     /** Assigns the camera to be used for rendering */
     AddCamera: (camera: THREE.Camera) => void;
     /** Modifies current camera parameters */
@@ -83,7 +84,7 @@ export declare class VenusRenderer {
     /** Add a rover object to the renderer */
     DeployRover(rover: Rover): void;
     /** Activate a controller of the current rover */
-    ActivateRoverController(searchParam: string | number): void;
+    ActivateRoverController(searchParam: string | number, canvas: HTMLCanvasElement): void;
     /** Removes rover safely disabling the current controls */
     RemoveRover(): void;
     GetActiveRoverController(): IRoverController;

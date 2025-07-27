@@ -76,6 +76,13 @@ export class RoverComponent implements OnInit, OnDestroy {
     if (this.activeController == 'default') this.activeController = 'second';
     else this.activeController = 'default';
 
-    this.venusRenderer?.ActivateRoverController(this.activeController);
+    const canvas = document.querySelector(
+      '#terraform-w-rover-rendered-container>canvas'
+    );
+    debugger
+    this.venusRenderer?.ActivateRoverController(
+      this.activeController,
+      canvas as HTMLCanvasElement
+    );
   }
 }

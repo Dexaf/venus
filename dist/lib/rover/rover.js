@@ -10,7 +10,7 @@ export class Rover {
      * set the active index for the controller to use, the method will check for usability of the param and throw error if necessary
      * @param searchParam - string to search controller by name or number to assign directly the index
      */
-    SetActiveController(searchParam) {
+    SetActiveController(searchParam, canvas) {
         switch (typeof searchParam) {
             case "string":
                 const index = this.controllers.findIndex((c) => c.name === searchParam);
@@ -28,12 +28,12 @@ export class Rover {
                 this.activeControllerIndex = searchParam;
                 break;
         }
-        this.activateController();
+        this.activateController(canvas);
     }
     /**
      * cleans last controller events and set up the events for the new one
      */
-    activateController() {
+    activateController(canvas) {
         //wire up the new commands
         //NOTE -  no need to check if the controller is undefined, the active index is
         //        checked on activation
@@ -46,7 +46,7 @@ export class Rover {
                     this.bindKeyboardInput(input, controller);
                     break;
                 case "pointer":
-                    this.bindPointerInput(input, controller);
+                    this.bindPointerInput(input, controller, canvas);
                     break;
             }
         }
@@ -73,7 +73,7 @@ export class Rover {
     /**
      * bind the input and save event wrapper to remove it later
      */
-    bindPointerInput(input, controller) {
+    bindPointerInput(input, controller, canvas) {
         const pointerDown = (e) => {
             input.isTapped = true;
             input.event = e;
@@ -82,8 +82,8 @@ export class Rover {
             input.isTapped = false;
             input.event = undefined;
         };
-        document.addEventListener("pointerdown", pointerDown);
-        document.addEventListener("pointerup", pointerUp);
+        canvas.addEventListener("pointerdown", pointerDown);
+        canvas.addEventListener("pointerup", pointerUp);
         controller.events.push({ eventType: "pointerdown", event: pointerDown });
         controller.events.push({ eventType: "pointerup", event: pointerUp });
     }

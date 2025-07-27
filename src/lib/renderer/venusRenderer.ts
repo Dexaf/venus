@@ -55,6 +55,10 @@ export class VenusRenderer {
 		this.renderer.setSize(width, height);
 	};
 
+  public GetCanvas = () => {
+    return this.renderer.domElement;
+  }
+
 	//===============================
 	// SECTION: Camera
 	//===============================
@@ -401,9 +405,9 @@ export class VenusRenderer {
 	}
 
 	/** Activate a controller of the current rover */
-	public ActivateRoverController(searchParam: string | number) {
+	public ActivateRoverController(searchParam: string | number, canvas: HTMLCanvasElement) {
 		if (!this.rover) throw new Error("can't activate controller as there is no rover deployed");
-		this.rover.SetActiveController(searchParam);
+		this.rover.SetActiveController(searchParam, canvas);
 	}
 
 	/** Removes rover safely disabling the current controls */

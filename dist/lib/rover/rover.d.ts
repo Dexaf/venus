@@ -6,7 +6,7 @@ export declare class Rover {
      * set the active index for the controller to use, the method will check for usability of the param and throw error if necessary
      * @param searchParam - string to search controller by name or number to assign directly the index
      */
-    SetActiveController(searchParam: string | number): void;
+    SetActiveController(searchParam: string | number, canvas: HTMLCanvasElement): void;
     /**
      * cleans last controller events and set up the events for the new one
      */

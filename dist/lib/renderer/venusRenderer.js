@@ -34,6 +34,9 @@ export class VenusRenderer {
         this.SetSize = (width, height) => {
             this.renderer.setSize(width, height);
         };
+        this.GetCanvas = () => {
+            return this.renderer.domElement;
+        };
         //===============================
         // SECTION: Camera
         //===============================
@@ -362,10 +365,10 @@ export class VenusRenderer {
         this.rover = rover;
     }
     /** Activate a controller of the current rover */
-    ActivateRoverController(searchParam) {
+    ActivateRoverController(searchParam, canvas) {
         if (!this.rover)
             throw new Error("can't activate controller as there is no rover deployed");
-        this.rover.SetActiveController(searchParam);
+        this.rover.SetActiveController(searchParam, canvas);
     }
     /** Removes rover safely disabling the current controls */
     RemoveRover() {
