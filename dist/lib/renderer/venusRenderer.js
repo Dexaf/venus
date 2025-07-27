@@ -308,6 +308,8 @@ export class VenusRenderer {
         this.FlattenBehaviours(this.lightsBehaviourBefore, key, false);
         this.FlattenBehaviours(this.lightsBehaviourAfter, key, false);
         this.RemoveSceneStateCallback(null, key);
+        //don't ask please...
+        light.obj.parent.remove(light.obj);
     }
     //===============================
     // SECTION: 3D Objects
@@ -354,6 +356,8 @@ export class VenusRenderer {
         this.FlattenBehaviours(this.objects3DBehaviourBefore, key, false);
         this.FlattenBehaviours(this.objects3DBehaviourAfter, key, false);
         this.RemoveSceneStateCallback(null, key);
+        //don't ask please...
+        obj.obj.parent.remove(obj.obj);
     }
     //===============================
     // SECTION: Rover handling
