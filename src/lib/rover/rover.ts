@@ -50,6 +50,9 @@ export class Rover {
 				case "pointer":
 					this.bindPointerInput(input, controller, canvas);
 					break;
+				case "pointerMove":
+					this.bindPointerMoveInput(input, controller, canvas);
+					break;
 			}
 		}
 	}
@@ -96,6 +99,24 @@ export class Rover {
 
 		controller.events.push({ eventType: "pointerdown", event: pointerDown });
 		controller.events.push({ eventType: "pointerup", event: pointerUp });
+	}
+
+	bindPointerMoveInput(input: IRoverInput, controller: IRoverController, canvas: HTMLCanvasElement) {
+		const pointerMoveDown = (e: PointerEvent) => {
+			input.isTapped = true;
+			input.event = e;
+		};
+
+		const pointerMoveUp = (e: PointerEvent) => {
+			input.isTapped = false;
+			input.event = undefined;
+		};
+
+		canvas.addEventListener("pointermove", pointerMoveDown);
+		canvas.addEventListener("pointerup", pointerMoveUp);
+
+		controller.events.push({ eventType: "pointermove", event: pointerMoveDown });
+		controller.events.push({ eventType: "pointerup", event: pointerMoveUp });
 	}
 
 	/**

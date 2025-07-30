@@ -1,4 +1,4 @@
-import { IRoverController } from "../interfaces/roverController.interface";
+import { IRoverController, IRoverInput } from "../interfaces/roverController.interface";
 export declare class Rover {
     controllers: IRoverController[];
     private activeControllerIndex;
@@ -19,6 +19,7 @@ export declare class Rover {
      * bind the input and save event wrapper to remove it later
      */
     private bindPointerInput;
+    bindPointerMoveInput(input: IRoverInput, controller: IRoverController, canvas: HTMLCanvasElement): void;
     /**
      * cleans all the events of the old controller
      */

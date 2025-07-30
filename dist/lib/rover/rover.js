@@ -48,6 +48,9 @@ export class Rover {
                 case "pointer":
                     this.bindPointerInput(input, controller, canvas);
                     break;
+                case "pointerMove":
+                    this.bindPointerMoveInput(input, controller, canvas);
+                    break;
             }
         }
     }
@@ -86,6 +89,20 @@ export class Rover {
         canvas.addEventListener("pointerup", pointerUp);
         controller.events.push({ eventType: "pointerdown", event: pointerDown });
         controller.events.push({ eventType: "pointerup", event: pointerUp });
+    }
+    bindPointerMoveInput(input, controller, canvas) {
+        const pointerMoveDown = (e) => {
+            input.isTapped = true;
+            input.event = e;
+        };
+        const pointerMoveUp = (e) => {
+            input.isTapped = false;
+            input.event = undefined;
+        };
+        canvas.addEventListener("pointermove", pointerMoveDown);
+        canvas.addEventListener("pointerup", pointerMoveUp);
+        controller.events.push({ eventType: "pointermove", event: pointerMoveDown });
+        controller.events.push({ eventType: "pointerup", event: pointerMoveUp });
     }
     /**
      * cleans all the events of the old controller
