@@ -51,6 +51,9 @@ export class Rover {
                 case "pointerMove":
                     this.bindPointerMoveInput(input, controller, canvas);
                     break;
+                case "wheel":
+                    this.bindWheelInput(input, controller, canvas);
+                    break;
             }
         }
     }
@@ -103,6 +106,23 @@ export class Rover {
         canvas.addEventListener("pointerup", pointerMoveUp);
         controller.events.push({ eventType: "pointermove", event: pointerMoveDown });
         controller.events.push({ eventType: "pointerup", event: pointerMoveUp });
+    }
+    bindWheelInput(input, controller, canvas) {
+        let timeoutCode;
+        const wheeling = (e) => {
+            input.isTapped = true;
+            input.event = e;
+            if (timeoutCode) {
+                clearTimeout(timeoutCode);
+            }
+            timeoutCode = setTimeout(() => {
+                input.isTapped = false;
+                input.event = undefined;
+                timeoutCode = null;
+            }, 20);
+        };
+        canvas.addEventListener("wheel", wheeling);
+        controller.events.push({ eventType: "wheel", event: wheeling });
     }
     /**
      * cleans all the events of the old controller

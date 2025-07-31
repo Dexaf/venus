@@ -20,6 +20,7 @@ export declare class Rover {
      */
     private bindPointerInput;
     bindPointerMoveInput(input: IRoverInput, controller: IRoverController, canvas: HTMLCanvasElement): void;
+    bindWheelInput(input: IRoverInput, controller: IRoverController, canvas: HTMLCanvasElement): void;
     /**
      * cleans all the events of the old controller
      */

@@ -53,10 +53,12 @@ export class Rover {
 				case "pointerMove":
 					this.bindPointerMoveInput(input, controller, canvas);
 					break;
+				case "wheel":
+					this.bindWheelInput(input, controller, canvas);
+					break;
 			}
 		}
 	}
-
 	/**
 	 * bind the input and save event wrapper to remove it later
 	 */
@@ -117,6 +119,28 @@ export class Rover {
 
 		controller.events.push({ eventType: "pointermove", event: pointerMoveDown });
 		controller.events.push({ eventType: "pointerup", event: pointerMoveUp });
+	}
+
+	bindWheelInput(input: IRoverInput, controller: IRoverController, canvas: HTMLCanvasElement) {
+		let timeoutCode: number | null;
+		const wheeling = (e: Event) => {
+			input.isTapped = true;
+			input.event = e;
+
+			if (timeoutCode) {
+				clearTimeout(timeoutCode);
+			}
+
+			timeoutCode = setTimeout(() => {
+				input.isTapped = false;
+				input.event = undefined;
+				timeoutCode = null;
+			}, 20);
+		};
+
+		canvas.addEventListener("wheel", wheeling);
+
+		controller.events.push({ eventType: "wheel", event: wheeling });
 	}
 
 	/**
