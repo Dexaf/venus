@@ -20,6 +20,12 @@ export const defaultController: IRoverController = {
       alias: 'click',
       isTapped: false,
     },
+    wheel: {
+      type: 'wheel',
+      value: 'wheel',
+      alias: 'wheel',
+      isTapped: false,
+    },
   },
   disabled: false,
   events: [],
@@ -30,4 +36,5 @@ export const defaultControllerActions = {
   up: 'up',
   down: 'down',
   click: 'click',
+  wheel: 'wheel',
 };
