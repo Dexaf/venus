@@ -94,30 +94,21 @@ export class Rover {
         controller.events.push({ eventType: "pointerup", event: pointerUp });
     }
     bindPointerMoveInput(input, controller, canvas) {
-        let previousPositionX = null;
-        let previousPositionY = null;
-        const pointerMoveDown = (e) => {
-            //INIT
-            if (previousPositionY == null)
-                previousPositionY = e.clientY;
-            if (previousPositionX == null)
-                previousPositionX = e.clientX;
-            const deltaY = e.clientY - previousPositionY;
-            const deltaX = e.clientX - previousPositionX;
-            if (deltaY != 0 || deltaX != 0) {
-                input.isTapped = true;
-                input.event = e;
+        let timeoutCode;
+        const pointerMove = (e) => {
+            input.isTapped = true;
+            input.event = e;
+            if (timeoutCode) {
+                clearTimeout(timeoutCode);
             }
-            else {
+            timeoutCode = setTimeout(() => {
                 input.isTapped = false;
                 input.event = undefined;
-            }
-            //UPDATE FOR NEXT ITERATION
-            previousPositionY = e.clientY;
-            previousPositionX = e.clientX;
+                timeoutCode = null;
+            }, 20);
         };
-        canvas.addEventListener("pointermove", pointerMoveDown);
-        controller.events.push({ eventType: "pointermove", event: pointerMoveDown });
+        canvas.addEventListener("pointermove", pointerMove);
+        controller.events.push({ eventType: "pointermove", event: pointerMove });
     }
     bindWheelInput(input, controller, canvas) {
         let timeoutCode;
