@@ -39,7 +39,6 @@ export class Scene implements IBehaviourObject<Object3D, sceneProperites> {
   BeforeRender(venusRenderer: VenusRenderer, delta: number): void {
     const aControllerRef = venusRenderer.GetActiveRoverController();
     if (aControllerRef.disabled == true) return;
-
     //DEBUG
     if (this.properties.div)
       this.properties.div.innerHTML = `
@@ -53,7 +52,10 @@ export class Scene implements IBehaviourObject<Object3D, sceneProperites> {
         from <b>${aControllerRef.inputs[a.click].value}</b>
         <br/>
         <b>Scroll is used</b>: ${aControllerRef.inputs[a.wheel].isTapped} 
-        from <b>${aControllerRef.inputs[a.wheel].value}
+        from <b>${aControllerRef.inputs[a.wheel].value}</b>
+        <br/>
+        <b>Drag is used</b>: ${aControllerRef.inputs[a.drag].isTapped} 
+        from <b>${aControllerRef.inputs[a.drag].value}</b>
       `;
   }
 }

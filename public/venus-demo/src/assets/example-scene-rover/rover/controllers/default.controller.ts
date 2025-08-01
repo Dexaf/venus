@@ -26,6 +26,12 @@ export const defaultController: IRoverController = {
       alias: 'wheel',
       isTapped: false,
     },
+    drag: {
+      type: 'pointerMove',
+      value: 'drag',
+      alias: 'drag',
+      isTapped: false,
+    },
   },
   disabled: false,
   events: [],
@@ -37,4 +43,5 @@ export const defaultControllerActions = {
   down: 'down',
   click: 'click',
   wheel: 'wheel',
+  drag: 'drag',
 };
