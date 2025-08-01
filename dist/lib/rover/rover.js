@@ -97,8 +97,11 @@ export class Rover {
         let previousPositionX = null;
         let previousPositionY = null;
         const pointerMoveDown = (e) => {
-            previousPositionY = e.clientY;
-            previousPositionX = e.clientX;
+            //INIT
+            if (previousPositionY == null)
+                previousPositionY = e.clientY;
+            if (previousPositionX == null)
+                previousPositionX = e.clientX;
             const deltaY = e.clientY - previousPositionY;
             const deltaX = e.clientX - previousPositionX;
             if (deltaY != 0 || deltaX != 0) {
@@ -109,6 +112,9 @@ export class Rover {
                 input.isTapped = false;
                 input.event = undefined;
             }
+            //UPDATE FOR NEXT ITERATION
+            previousPositionY = e.clientY;
+            previousPositionX = e.clientX;
         };
         canvas.addEventListener("pointermove", pointerMoveDown);
         controller.events.push({ eventType: "pointermove", event: pointerMoveDown });

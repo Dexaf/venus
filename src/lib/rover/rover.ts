@@ -104,11 +104,13 @@ export class Rover {
 	}
 
 	bindPointerMoveInput(input: IRoverInput, controller: IRoverController, canvas: HTMLCanvasElement) {
-		let previousPositionX = null;
+		let previousPositionX: null | number = null;
 		let previousPositionY: null | number = null;
 		const pointerMoveDown = (e: PointerEvent) => {
-			previousPositionY = e.clientY;
-			previousPositionX = e.clientX;
+			//INIT
+      if (previousPositionY == null) previousPositionY = e.clientY;
+			if (previousPositionX == null) previousPositionX = e.clientX;
+
 			const deltaY = e.clientY - previousPositionY;
 			const deltaX = e.clientX - previousPositionX;
 			if (deltaY != 0 || deltaX != 0) {
@@ -118,6 +120,10 @@ export class Rover {
 				input.isTapped = false;
 				input.event = undefined;
 			}
+
+			//UPDATE FOR NEXT ITERATION
+			previousPositionY = e.clientY;
+			previousPositionX = e.clientX;
 		};
 
 		canvas.addEventListener("pointermove", pointerMoveDown);
