@@ -5,11 +5,14 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   selector: 'app-root',
   template: `
     <div class="navigator-container">
-      <a routerLink="/venus" routerLinkActive="active">venus</a>
-      <a routerLink="/terraform" routerLinkActive="active">terraform</a>
-      <a routerLink="/rover_terraform" routerLinkActive="active"
-        >rover + terraform</a
-      >
+      <a routerLink="/venus" routerLinkActive="active"> venus </a>
+      <a routerLink="/terraform" routerLinkActive="active"> terraform </a>
+      <a routerLink="/rover_terraform" routerLinkActive="active">
+        rover + terraform
+      </a>
+      <a routerLink="/rover_terraform_mobile" routerLinkActive="active">
+        rover + terraform mobile
+      </a>
     </div>
     <section class="renderer-wrapper">
       <router-outlet></router-outlet>

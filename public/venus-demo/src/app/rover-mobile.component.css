@@ -1,0 +1,7 @@
+#canvas-container {
+  height: 50vh;
+}
+
+canvas {
+  touch-action: none
+}

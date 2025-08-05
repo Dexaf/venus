@@ -12,7 +12,7 @@ export const ExampleSceneState: ITerraformState = {
   lights: [dirLight],
   audios: [],
   roverConfig: {
-    rover: null,
+    rover: [],
     activeController: null,
   },
 };
