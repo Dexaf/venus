@@ -1,183 +1,229 @@
-import { IRoverController, IRoverInput } from "../interfaces/roverController.interface";
+import { Reaction, ReactionKey, RoverControllerInterface, TouchInterface } from "../interfaces/rover-controller.interface";
 
-//NOTE -  ROVER SEEMS TO BE COMPLETED BUT NEEDS TO BE TESTED MORE AS
-//        CONTROLLERS ARE COMPLICATED
 export class Rover {
-	controllers: IRoverController[] = [];
-	//NOTE - default controller is the first one
-	private activeControllerIndex: number = 0;
+	public controller!: RoverControllerInterface;
 
 	/**
-	 * set the active index for the controller to use, the method will check for usability of the param and throw error if necessary
-	 * @param searchParam - string to search controller by name or number to assign directly the index
+	 * if false it stops the controller events from doing anything, updating or firing reactions
 	 */
-	public SetActiveController(searchParam: string | number, canvas: HTMLCanvasElement) {
-		switch (typeof searchParam) {
-			case "string":
-				const index = this.controllers.findIndex((c) => c.name === searchParam);
-				if (index == -1) throw new Error(`controller with name ${searchParam} wasn't found`);
-				this.CleanController();
-				this.activeControllerIndex = index;
-				break;
-			case "number":
-				if (searchParam < 0) throw new Error(`can't use negative index to set active (${searchParam}) controller`);
-				if (this.controllers.length < searchParam) throw new Error(`the controller index chosen (${searchParam}) is out of bound`);
-				this.CleanController();
-				this.activeControllerIndex = searchParam;
-				break;
+	public isActive = false;
+
+	/**
+	 * @param canvas the canvas of the working render
+	 * @description resets the inputs and activate the event listeners to trigger the events of the controller.
+	 * you need to pass a controller to this object first
+	 */
+	public initialize(canvas: HTMLCanvasElement) {
+		if (this.controller == null) {
+			console.log("trying to initialize empty controller");
+			return;
 		}
 
-		this.activateController(canvas);
+		this.resetControllerInputs();
+
+		// SINGLE INPUT
+		document.addEventListener("keypress", this.keypress.bind(this));
+		canvas.addEventListener("pointerdown", this.pointerdown.bind(this));
+		canvas.addEventListener("pointermove", this.pointermove.bind(this));
+		document.addEventListener("wheel", this.wheeluse.bind(this));
+
+		// PARALLEL INPUT
+		document.addEventListener("keydown", this.keydown.bind(this));
+
+		// RESETS
+		document.addEventListener("keyup", this.keyup.bind(this));
+		canvas.addEventListener("pointerup", this.pointerup.bind(this));
+		document.addEventListener("pointercancel", this.pointercancel.bind(this));
+		//NOTE blocca lo scroll della pagina
+		canvas.addEventListener("touchmove", (e) => {
+			e.preventDefault();
+		});
+
+		this.isActive = true;
 	}
 
 	/**
-	 * cleans last controller events and set up the events for the new one
+	 * @description resets the inputs of the controller.
+	 * you need to pass a controller to this object first
 	 */
-	private activateController(canvas: HTMLCanvasElement) {
-		//wire up the new commands
-		//NOTE -  no need to check if the controller is undefined, the active index is
-		//        checked on activation
-		const controller = this.controllers[this.activeControllerIndex];
+	private resetControllerInputs() {
+		if (this.controller == null) {
+			console.log("trying to reset null controller");
+			return;
+		}
 
-		const keys = Object.keys(controller.inputs);
-		for (let i = 0; i < keys.length; i++) {
-			const input = controller.inputs[keys[i]];
+		this.controller.keys.holded.inputs = {};
+		this.controller.keys.pressed.input = "";
+		this.controller.keys.released.input = "";
+		this.controller.touch.down.inputs = [];
+		this.controller.touch.up.inputs = [];
+		this.controller.touch.moving.inputs = [];
+		this.controller.wheel.event = null;
+	}
 
-			switch (input.type) {
-				case "keyboard":
-					this.bindKeyboardInput(input, controller);
-					break;
-				case "pointer":
-					this.bindPointerInput(input, controller, canvas);
-					break;
-				case "pointerMove":
-					this.bindPointerMoveInput(input, controller, canvas);
-					break;
-				case "wheel":
-					this.bindWheelInput(input, controller, canvas);
-					break;
-			}
+	/**
+	 *
+	 * @param canvas the canvas of the working render
+	 * @description stops the controller by removing the events, the value of the controller won't be updated anymore.
+	 * you need to pass a controller to this object first
+	 */
+	public stop(canvas: HTMLCanvasElement) {
+		if (this.controller == null) {
+			console.log("trying to stop null controller");
+			return;
+		}
+
+		this.isActive = false;
+
+		// SINGLE INPUT
+		document.removeEventListener("keypress", this.keypress.bind(this));
+		canvas.removeEventListener("pointerdown", this.pointerdown.bind(this));
+		canvas.removeEventListener("pointermove", this.pointermove.bind(this));
+		document.removeEventListener("wheel", this.wheeluse.bind(this));
+
+		// PARALLEL INPUT
+		document.removeEventListener("keydown", this.keydown.bind(this));
+
+		// RESETS
+		document.removeEventListener("keyup", this.keyup.bind(this));
+		canvas.removeEventListener("pointerup", this.pointerup.bind(this));
+		document.addEventListener("pointercancel", this.pointercancel.bind(this));
+	}
+
+	//SECTION - EVENTS FOR THE ROVER
+	//KEYBOARD INPUT
+	private keypress = (e: KeyboardEvent) => {
+		if (this.isActive) {
+			this.controller.keys.pressed.input = e.code;
+			//local to the event
+			this.reactionHandling(this.controller.keys.pressed.reactions);
+			//global
+			this.reactionHandling(this.controller.reactions);
+		}
+	};
+	private keydown = (e: KeyboardEvent) => {
+		if (this.isActive) {
+			this.controller.keys.holded.inputs[e.code] = true;
+			//local to the event
+			this.reactionHandling(this.controller.keys.holded.reactions);
+			//global
+			this.reactionHandling(this.controller.reactions);
+		}
+	};
+	private keyup = (e: KeyboardEvent) => {
+		if (this.isActive) {
+			delete this.controller.keys.holded.inputs[e.code];
+			if (this.controller.keys.pressed.input == e.code) this.controller.keys.pressed.input = "";
+
+			this.controller.keys.released.input = e.code;
+			//local to the event
+			this.reactionHandling(this.controller.keys.released.reactions);
+			//global
+			this.reactionHandling(this.controller.reactions);
+			//NOTE - maybe we should reset the input for released
+		}
+	};
+	//POINTER INPUT
+	private pointerdown = (e: PointerEvent) => {
+		e.preventDefault();
+		//NOTE blocca lo scroll della pagina
+		if (e) (e.target as HTMLElement).setPointerCapture(e.pointerId);
+		if (this.isActive) this.updatePointerReaction(e, this.controller.touch.down);
+	};
+
+	private pointermove = (e: PointerEvent) => {
+		e.preventDefault();
+
+		if (this.isActive) {
+			this.updatePointerReaction(e, this.controller.touch.moving, true, e.pointerId);
+		}
+	};
+
+	private pointerup = (e: PointerEvent) => {
+		e.preventDefault();
+		if (this.isActive) {
+			this.updatePointerReaction(null, this.controller.touch.down, false, e.pointerId);
+			this.updatePointerReaction(null, this.controller.touch.moving, true, e.pointerId);
+			this.updatePointerReaction(e, this.controller.touch.up);
+		}
+	};
+
+	private pointercancel = (e: PointerEvent) => {
+		e.preventDefault();
+		if (this.isActive) {
+			this.updatePointerReaction(null, this.controller.touch.down, false, e.pointerId);
+			this.updatePointerReaction(null, this.controller.touch.moving, true, e.pointerId);
+		}
+	};
+	//!SECTION - EVENTS FOR THE ROVER
+	//WHEEL INPUT
+	private wheeluse = (e: WheelEvent) => {
+		if (this.isActive) {
+			let timeoutId: number | null = null;
+
+			this.controller.wheel.event = e;
+			//local to the event
+			this.reactionHandling(this.controller.wheel.reactions);
+			//global
+			this.reactionHandling(this.controller.reactions);
+
+			//NOTE - without this timeout we don't have a way of telling if the user stopped doing the action
+			//NOTE - should check if firing the events again make sense
+			timeoutId = setTimeout(() => {
+				this.controller.wheel.event = null;
+				//local to the event
+				this.reactionHandling(this.controller.wheel.reactions);
+				//global
+				this.reactionHandling(this.controller.reactions);
+			}, 30);
+		}
+	};
+
+	//SECTION - UTILS
+	/**
+	 * @param event: current PointerEvent or null to use for the update
+	 * @param touchInterface: the touch we are working with
+	 * @param isReacting: (default is true) if the update should trigger an update for the reactions
+	 * @param pointerId: (default is null) the pointer id of an event, need in mobile
+	 * @description find the pointerId to update with the new event/null and check if needed to trigger the reaction
+	 */
+	private updatePointerReaction(event: PointerEvent | null, touchInterface: TouchInterface, isReacting = true, pointerId: number | null = null) {
+		const currEventIndex = touchInterface.inputs.findIndex((i) => i.event?.pointerId == pointerId);
+
+		if (event)
+			if (currEventIndex != -1)
+				//UPDATE EVENT
+				touchInterface.inputs[currEventIndex] = {
+					event: event,
+				};
+			//ADD EVENT
+			else touchInterface.inputs.push({ event: event });
+		//DELETE OLD EVENT
+		else if (currEventIndex != -1) touchInterface.inputs.splice(currEventIndex, 1);
+
+		if (isReacting) {
+			//local to the event
+			this.touchReactionHandling(touchInterface.reactions, event);
+			//global
+			this.touchReactionHandling(this.controller.reactions, event);
 		}
 	}
-	/**
-	 * bind the input and save event wrapper to remove it later
-	 */
-	private bindKeyboardInput(input: IRoverInput, controller: IRoverController) {
-		const keyDown = (e: KeyboardEvent) => {
-			if (e.key == input.value) {
-				input.isTapped = true;
-			}
-		};
-
-		const keyRelease = (e: KeyboardEvent) => {
-			if (e.key == input.value) {
-				input.isTapped = false;
-			}
-		};
-
-		document.addEventListener("keydown", keyDown);
-		document.addEventListener("keyup", keyRelease);
-
-		controller.events.push({ eventType: "keydown", event: keyDown });
-		controller.events.push({ eventType: "keyup", event: keyRelease });
-	}
 
 	/**
-	 * bind the input and save event wrapper to remove it later
+	 * @param reactions
+	 * @param event
+	 * @description activates all the reactions
 	 */
-	private bindPointerInput(input: IRoverInput, controller: IRoverController, canvas: HTMLCanvasElement) {
-		const pointerDown = (e: PointerEvent) => {
-			input.isTapped = true;
-			input.event = e;
-		};
-
-		const pointerUp = (e: PointerEvent) => {
-			input.isTapped = false;
-			input.event = undefined;
-		};
-
-		canvas.addEventListener("pointerdown", pointerDown);
-		canvas.addEventListener("pointerup", pointerUp);
-
-		controller.events.push({ eventType: "pointerdown", event: pointerDown });
-		controller.events.push({ eventType: "pointerup", event: pointerUp });
-	}
-
-	bindPointerMoveInput(input: IRoverInput, controller: IRoverController, canvas: HTMLCanvasElement) {
-		let timeoutCode: number | null;
-		const pointerMove = (e: Event) => {
-			input.isTapped = true;
-			input.event = e;
-
-			if (timeoutCode) {
-				clearTimeout(timeoutCode);
-			}
-
-			timeoutCode = setTimeout(() => {
-				input.isTapped = false;
-				input.event = undefined;
-				timeoutCode = null;
-			}, 20);
-		};
-
-		canvas.addEventListener("pointermove", pointerMove);
-
-		controller.events.push({ eventType: "pointermove", event: pointerMove });
-	}
-
-	bindWheelInput(input: IRoverInput, controller: IRoverController, canvas: HTMLCanvasElement) {
-		let timeoutCode: number | null;
-		const wheeling = (e: Event) => {
-			input.isTapped = true;
-			input.event = e;
-
-			if (timeoutCode) {
-				clearTimeout(timeoutCode);
-			}
-
-			timeoutCode = setTimeout(() => {
-				input.isTapped = false;
-				input.event = undefined;
-				timeoutCode = null;
-			}, 20);
-		};
-
-		canvas.addEventListener("wheel", wheeling);
-
-		controller.events.push({ eventType: "wheel", event: wheeling });
-	}
+	private touchReactionHandling = (reactions: Map<ReactionKey, Reaction>, event: PointerEvent | null) => {
+		reactions.forEach((r) => r(event));
+	};
 
 	/**
-	 * cleans all the events of the old controller
+	 * @param reactions
+	 * @description activates all the reactions
 	 */
-	public CleanController() {
-		const controller = this.controllers[this.activeControllerIndex];
-		for (let i = 0; i < controller.events.length; i++) {
-			const eventObj = controller.events[i];
-			document.removeEventListener(eventObj.eventType, eventObj.event);
-		}
-	}
-
-	public RemoveController(index: number) {
-		if (index > this.controllers.length) throw new Error(`can't remove controller as index ${index} is out of bound`);
-
-		if (index == this.activeControllerIndex) {
-			this.CleanController();
-			this.controllers.splice(index, 1);
-			//reset to have a predicatble behaviour
-			this.activeControllerIndex = 0;
-		} else {
-			//adjust the active index to avoid weird cleans later
-			if (this.activeControllerIndex > index) this.activeControllerIndex--;
-			this.controllers.splice(index, 1);
-		}
-	}
-
-	public AddController(controller: IRoverController) {
-		this.controllers.push(controller);
-	}
-
-	public GetActiveController() {
-		return this.controllers[this.activeControllerIndex];
-	}
+	private reactionHandling = (reactions: Map<ReactionKey, Reaction>) => {
+		reactions.forEach((r) => r());
+	};
+	//!SECTION - UTILS
 }

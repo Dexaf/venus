@@ -10,7 +10,7 @@ export interface ITerraformState {
 	lights: IBehaviourObject<Light, any>[];
 	audios: IAudioConfig[];
 	roverConfig: {
-		rover: Rover | null;
-		activeController: string | number | null;
+		rover: Rover[];
+		activeController: string | null;
 	};
 }
