@@ -64,9 +64,9 @@ export class Terraform {
         }
         //ROVER
         if (this._currentState.roverConfig.rover != null) {
-            this._venusRenderer.DeployRover(this._currentState.roverConfig.rover);
+            this._currentState.roverConfig.rover.forEach(r => this._venusRenderer.DeployRover(r));
             if (this._currentState.roverConfig.activeController != null) {
-                this._venusRenderer.ActivateRoverController(this._currentState.roverConfig.activeController, this._venusRenderer.GetCanvas());
+                this._venusRenderer.ActivateRoverController(this._currentState.roverConfig.activeController);
             }
         }
     }

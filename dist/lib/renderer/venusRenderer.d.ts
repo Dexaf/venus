@@ -1,13 +1,13 @@
 import * as THREE from "three";
 import { IBehaviourObject } from "../interfaces/behaviourObject.interface";
 import { IAudioConfig } from "../interfaces/audioConfig.interface";
-import { IRoverController } from "../interfaces/roverController.interface";
 import { Rover } from "../rover/rover";
 export declare class VenusRenderer {
-    private renderer;
+    renderer: THREE.WebGLRenderer;
     private scene;
     camera: THREE.Camera | null;
-    private rover;
+    private rovers;
+    private activeRoverName;
     private sceneState;
     private sceneStateOberservers;
     private audioListener;
@@ -20,6 +20,8 @@ export declare class VenusRenderer {
     private lightsBehaviourBefore;
     private lightsBehaviourAfter;
     private timeFromStart;
+    private _lastDelta;
+    get lastDelta(): number;
     private clock;
     constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene);
     SetSize: (width: number, height: number) => void;
@@ -81,13 +83,17 @@ export declare class VenusRenderer {
     ModifyObject3D(key: string, object3D: Partial<IBehaviourObject<THREE.Object3D, any>>): void;
     /** Removes a 3D object and its render callbacks */
     RemoveObject3D(key: string): void;
+    /** Get active rover */
+    get activeRover(): Rover;
     /** Add a rover object to the renderer */
     DeployRover(rover: Rover): void;
     /** Activate a controller of the current rover */
-    ActivateRoverController(searchParam: string | number, canvas: HTMLCanvasElement): void;
+    ActivateRoverController(roverControllerName: string): void;
+    /** Pause a controller of the current rover */
+    PauseRoverControlelr(roverControllerName: string): void;
     /** Removes rover safely disabling the current controls */
-    RemoveRover(): void;
-    GetActiveRoverController(): IRoverController;
+    RemoveRover(roverControllerName: string): void;
+    GetRoverByControllerName(roverControllerName: string): Rover;
     /** Initializes clock and starts the animation loop */
     StartRender(): void;
     /** Internal animation callback for each frame */

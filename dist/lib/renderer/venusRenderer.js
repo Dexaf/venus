@@ -1,12 +1,16 @@
 import * as THREE from "three";
 export class VenusRenderer {
+    get lastDelta() {
+        return this._lastDelta;
+    }
     constructor(renderer, scene) {
         // Scene to render
         this.scene = null;
         // Camera used for rendering
         this.camera = null;
         // Rover slot to use for eventual controller
-        this.rover = null;
+        this.rovers = [];
+        this.activeRoverName = "";
         // Maps for global vars of scene
         // the key is the name of the var in the state
         this.sceneState = new Map();
@@ -27,6 +31,7 @@ export class VenusRenderer {
         this.lightsBehaviourAfter = [];
         // Time elapsed since rendering started
         this.timeFromStart = 0;
+        this._lastDelta = 0;
         this.clock = null;
         //===============================
         // SECTION: Scene
@@ -362,28 +367,62 @@ export class VenusRenderer {
     //===============================
     // SECTION: Rover handling
     //===============================
+    /** Get active rover */
+    get activeRover() {
+        if (this.rovers.length < 1)
+            throw new Error("can't activate controller as there is no rover deployed");
+        const ri = this.rovers.findIndex((r) => r.controller?.name == this.activeRoverName);
+        if (ri == -1)
+            throw new Error(`rover controller with name ${this.activeRoverName} doesn't exist and can't be activated`);
+        return this.rovers[ri];
+    }
     /** Add a rover object to the renderer */
     DeployRover(rover) {
-        if (this.rover)
-            this.rover.CleanController();
-        this.rover = rover;
+        this.rovers.push(rover);
     }
     /** Activate a controller of the current rover */
-    ActivateRoverController(searchParam, canvas) {
-        if (!this.rover)
+    ActivateRoverController(roverControllerName) {
+        if (this.rovers.length < 1)
             throw new Error("can't activate controller as there is no rover deployed");
-        this.rover.SetActiveController(searchParam, canvas);
+        const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
+        if (ri == -1)
+            throw new Error(`rover controller with name ${roverControllerName} doesn't exist and can't be activated`);
+        for (let i = 0; i < this.rovers.length; i++) {
+            const rover = this.rovers[i];
+            rover.stop(this.GetCanvas());
+        }
+        this.rovers[ri].initialize(this.GetCanvas());
+        this.activeRoverName = roverControllerName;
+    }
+    /** Pause a controller of the current rover */
+    PauseRoverControlelr(roverControllerName) {
+        if (this.rovers.length < 1)
+            throw new Error("can't activate controller as there is no rover deployed");
+        const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
+        if (ri == -1)
+            throw new Error(`rover controller with name ${roverControllerName} doesn't exist and can't be activated`);
+        this.rovers[ri].isActive = false;
     }
     /** Removes rover safely disabling the current controls */
-    RemoveRover() {
-        if (!this.rover)
+    RemoveRover(roverControllerName) {
+        if (this.rovers.length < 1)
             throw new Error("can't remove controller as there is no rover deployed");
-        this.rover.CleanController();
+        const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
+        if (ri == -1)
+            throw new Error(`rover controller with name ${roverControllerName} doesn't exist and can't be removed`);
+        const rover = this.rovers[ri];
+        if (rover.isActive) {
+            rover.stop(this.GetCanvas());
+            this.activeRoverName = "";
+        }
+        this.rovers.splice(ri, 1);
     }
-    GetActiveRoverController() {
-        if (!this.rover)
-            throw new Error("can't get controller inputs as there is no rover deployed");
-        return this.rover.GetActiveController();
+    GetRoverByControllerName(roverControllerName) {
+        if (this.rovers.length < 1)
+            throw new Error("can't find controller as there is no rover deployed");
+        const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
+        const rover = this.rovers[ri];
+        return rover;
     }
     //===============================
     // SECTION: Core Rendering Loop
@@ -404,6 +443,7 @@ export class VenusRenderer {
             o3D.animationMixer?.update(delta);
         });
         this.timeFromStart += delta;
+        this._lastDelta = delta;
         this.RunBehavioursBefore(delta);
         this.renderer.render(this.scene, this.camera);
         this.RunBehavioursAfter(delta);
