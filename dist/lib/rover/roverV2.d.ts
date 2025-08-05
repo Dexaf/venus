@@ -1,6 +1,6 @@
 import { RoverControllerInterface } from "../interfaces/rover-controller.interface";
 export declare class Rover {
-    controller: RoverControllerInterface;
+    controller: RoverControllerInterface | null;
     /**
      * if false it stops the controller events from doing anything, updating or firing reactions
      */
@@ -12,10 +12,11 @@ export declare class Rover {
      */
     initialize(canvas: HTMLCanvasElement): void;
     /**
+     * @param canvas the canvas of the working render
      * @description resets the inputs of the controller.
      * you need to pass a controller to this object first
      */
-    private resetControllerInputs;
+    resetControllerInputs(): void;
     /**
      *
      * @param canvas the canvas of the working render
@@ -29,22 +30,14 @@ export declare class Rover {
     private pointerdown;
     private pointermove;
     private pointerup;
-    private pointercancel;
-    private wheeluse;
     /**
      * @param event: current PointerEvent or null to use for the update
-     * @param touchInterface: the touch we are working with
+     * @param pointerId: the pointer Id we are updating (needed for mobile)
+     * @param pointerArray: the pointer array where to look for the update, based on the event
      * @param isReacting: (default is true) if the update should trigger an update for the reactions
-     * @param pointerId: (default is null) the pointer id of an event, need in mobile
-     * @description find the pointerId to update with the new event/null and check if needed to trigger the reaction
+     * @description find the pointerId to update with the new event/null and check if need to trigger the reaction
      */
     private updatePointerReaction;
-    /**
-     * @param reactions
-     * @param event
-     * @description activates all the reactions
-     */
-    private touchReactionHandling;
     /**
      * @param reactions
      * @description activates all the reactions

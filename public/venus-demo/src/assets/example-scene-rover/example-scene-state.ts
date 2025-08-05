@@ -1,14 +1,22 @@
 import { ITerraformState } from '../../../../../dist/lib/interfaces/terraformState.interface';
-import { dirLight } from './lights/dirLight';
-import { Scene } from './objects3D/scene/scene';
-import { getRover } from './rover/rover';
+import { Rover } from '../../../../../dist/lib/rover/rover';
+import { CreateRoverController } from '../../../../../dist/lib/rover/rover-controller';
+
+export const defaultControllerName = 'default';
+export const secondControllerName = 'second';
+
+const defaultRover = new Rover();
+defaultRover.controller = CreateRoverController(defaultControllerName);
+
+const secondRover = new Rover();
+secondRover.controller = CreateRoverController(secondControllerName);
 
 export const ExampleSceneState: ITerraformState = {
-  objects: [new Scene()],
-  lights: [dirLight],
+  objects: [],
+  lights: [],
   audios: [],
   roverConfig: {
-    rover: getRover(),
-    activeController: 0,
+    rover: [defaultRover, secondRover],
+    activeController: defaultControllerName,
   },
 };

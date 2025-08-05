@@ -5,7 +5,9 @@ import { Terraform } from "./lib/terraform/terraform";
 import { IAudioConfig } from "./lib/interfaces/audioConfig.interface";
 import { IBehaviourObject, IBehaviourObjectChildren } from "./lib/interfaces/behaviourObject.interface";
 import { IPositionalConfig } from "./lib/interfaces/positionalConfig.interface";
-import { IRoverController, IRoverInput } from "./lib/interfaces/roverController.interface";
 import { ITerraformState } from "./lib/interfaces/terraformState.interface";
-
-export { VenusRenderer, SetupRenderer, Rover, Terraform, IAudioConfig, IBehaviourObject, IBehaviourObjectChildren, IPositionalConfig, IRoverController, IRoverInput, ITerraformState };
+import { RoverControllerInterface, Reaction, TouchInputDataInterface, PointerButtons, WheelInputReactionInterface } from "./lib/interfaces/rover-controller.interface";
+import { CreateRoverController } from "./lib/rover/rover-controller";
+import { pointerEventClientCToVector2 } from "./lib/utils/pointerToVector2";
+import { magnitude2D } from "./lib/utils/magnitude";
+export { VenusRenderer, SetupRenderer, Rover, Terraform, IAudioConfig, IBehaviourObject, IBehaviourObjectChildren, IPositionalConfig, ITerraformState, CreateRoverController, RoverControllerInterface, Reaction, TouchInputDataInterface, WheelInputReactionInterface, PointerButtons, pointerEventClientCToVector2, magnitude2D };

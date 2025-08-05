@@ -3,6 +3,7 @@ import { TerraformComponent } from './terraform.component';
 import { VenusComponent } from './venus.component';
 import { HomeComponent } from './home.component';
 import { RoverComponent } from './rover.component';
+import { RoverMobileComponent } from './rover-mobile.component';
 
 export const routes: Routes = [
   {
@@ -20,6 +21,10 @@ export const routes: Routes = [
       {
         path: 'rover_terraform',
         loadComponent: () => RoverComponent,
+      },
+      {
+        path: 'rover_terraform_mobile',
+        loadComponent: () => RoverMobileComponent,
       },
     ],
   },

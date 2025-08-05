@@ -1,12 +1,11 @@
 import * as THREE from "three";
 import { IBehaviourObject } from "../interfaces/behaviourObject.interface";
 import { IAudioConfig } from "../interfaces/audioConfig.interface";
-import { IRoverController, IRoverInput } from "../interfaces/roverController.interface";
 import { Rover } from "../rover/rover";
 
 export class VenusRenderer {
 	// Three.js WebGL renderer instance
-	private renderer: THREE.WebGLRenderer;
+	public renderer: THREE.WebGLRenderer;
 
 	// Scene to render
 	private scene: THREE.Scene | null = null;
@@ -15,7 +14,9 @@ export class VenusRenderer {
 	public camera: THREE.Camera | null = null;
 
 	// Rover slot to use for eventual controller
-	private rover: Rover | null = null;
+	private rovers: Rover[] = [];
+
+	private activeRoverName: string = "";
 
 	// Maps for global vars of scene
 	// the key is the name of the var in the state
@@ -41,6 +42,10 @@ export class VenusRenderer {
 
 	// Time elapsed since rendering started
 	private timeFromStart = 0;
+	private _lastDelta = 0;
+	get lastDelta(): number {
+		return this._lastDelta;
+	}
 	private clock: THREE.Clock | null = null;
 
 	constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene) {
@@ -55,9 +60,9 @@ export class VenusRenderer {
 		this.renderer.setSize(width, height);
 	};
 
-  public GetCanvas = () => {
-    return this.renderer.domElement;
-  }
+	public GetCanvas = () => {
+		return this.renderer.domElement;
+	};
 
 	//===============================
 	// SECTION: Camera
@@ -343,8 +348,8 @@ export class VenusRenderer {
 		this.FlattenBehaviours(this.lightsBehaviourAfter, key, false);
 		this.RemoveSceneStateCallback(null, key);
 
-    //don't ask please...
-    light.obj!.parent!.remove(light.obj!);
+		//don't ask please...
+		light.obj!.parent!.remove(light.obj!);
 	}
 
 	//===============================
@@ -397,34 +402,76 @@ export class VenusRenderer {
 		this.FlattenBehaviours(this.objects3DBehaviourAfter, key, false);
 		this.RemoveSceneStateCallback(null, key);
 
-    //don't ask please...
-    obj.obj!.parent!.remove(obj.obj!);
+		//don't ask please...
+		obj.obj!.parent!.remove(obj.obj!);
 	}
 
 	//===============================
 	// SECTION: Rover handling
 	//===============================
+	/** Get active rover */
+	public get activeRover() {
+		if (this.rovers.length < 1) throw new Error("can't activate controller as there is no rover deployed");
+
+		const ri = this.rovers.findIndex((r) => r.controller?.name == this.activeRoverName);
+		if (ri == -1) throw new Error(`rover controller with name ${this.activeRoverName} doesn't exist and can't be activated`);
+
+		return this.rovers[ri];
+	}
+
 	/** Add a rover object to the renderer */
 	public DeployRover(rover: Rover) {
-		if (this.rover) this.rover.CleanController();
-		this.rover = rover;
+		this.rovers.push(rover);
 	}
 
 	/** Activate a controller of the current rover */
-	public ActivateRoverController(searchParam: string | number, canvas: HTMLCanvasElement) {
-		if (!this.rover) throw new Error("can't activate controller as there is no rover deployed");
-		this.rover.SetActiveController(searchParam, canvas);
+	public ActivateRoverController(roverControllerName: string) {
+		if (this.rovers.length < 1) throw new Error("can't activate controller as there is no rover deployed");
+
+		const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
+		if (ri == -1) throw new Error(`rover controller with name ${roverControllerName} doesn't exist and can't be activated`);
+
+		for (let i = 0; i < this.rovers.length; i++) {
+			const rover = this.rovers[i];
+			rover.stop(this.GetCanvas());
+		}
+
+		this.rovers[ri].initialize(this.GetCanvas());
+
+		this.activeRoverName = roverControllerName;
+	}
+
+	/** Pause a controller of the current rover */
+	public PauseRoverControlelr(roverControllerName: string) {
+		if (this.rovers.length < 1) throw new Error("can't activate controller as there is no rover deployed");
+
+		const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
+		if (ri == -1) throw new Error(`rover controller with name ${roverControllerName} doesn't exist and can't be activated`);
+		this.rovers[ri].isActive = false;
 	}
 
 	/** Removes rover safely disabling the current controls */
-	public RemoveRover() {
-		if (!this.rover) throw new Error("can't remove controller as there is no rover deployed");
-		this.rover.CleanController();
+	public RemoveRover(roverControllerName: string) {
+		if (this.rovers.length < 1) throw new Error("can't remove controller as there is no rover deployed");
+
+		const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
+		if (ri == -1) throw new Error(`rover controller with name ${roverControllerName} doesn't exist and can't be removed`);
+		const rover = this.rovers[ri];
+
+		if (rover.isActive) {
+			rover.stop(this.GetCanvas());
+			this.activeRoverName = "";
+		}
+		this.rovers.splice(ri, 1);
 	}
 
-	public GetActiveRoverController() {
-		if (!this.rover) throw new Error("can't get controller inputs as there is no rover deployed");
-		return this.rover.GetActiveController();
+	public GetRoverByControllerName(roverControllerName: string) {
+		if (this.rovers.length < 1) throw new Error("can't find controller as there is no rover deployed");
+
+		const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
+		const rover = this.rovers[ri];
+
+		return rover;
 	}
 	//===============================
 	// SECTION: Core Rendering Loop
@@ -445,7 +492,7 @@ export class VenusRenderer {
 			o3D.animationMixer?.update(delta);
 		});
 		this.timeFromStart += delta;
-
+		this._lastDelta = delta;
 		this.RunBehavioursBefore(delta);
 		this.renderer.render(this.scene!, this.camera!);
 		this.RunBehavioursAfter(delta);

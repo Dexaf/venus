@@ -1,0 +1,222 @@
+<div>
+  <h3>{{activeController}}</h3>
+  <button (click)="swtichController()">Switch controller</button>
+  <br>
+  <br>
+  <svg id="keyboard" xmlns="http://www.w3.org/2000/svg" width="1030" height="300" style="background:#f0f0f0;">
+    <!-- Riga 1 -->
+    <g id="row1">
+      <!-- Tasti numerici e simboli -->
+      <!-- Usa un ciclo generato manualmente -->
+      <!-- Escape, numeri, backspace -->
+      <g id="Escape">
+        <rect class="key" x="10" y="10" width="60" height="50" rx="5" /><text class="key-label" x="40" y="35">Esc</text>
+      </g>
+      <g id="Key1">
+        <rect class="key" x="80" y="10" width="50" height="50" rx="5" /><text class="key-label" x="105" y="35">1</text>
+      </g>
+      <g id="Key2">
+        <rect class="key" x="140" y="10" width="50" height="50" rx="5" /><text class="key-label" x="165" y="35">2</text>
+      </g>
+      <g id="Key3">
+        <rect class="key" x="200" y="10" width="50" height="50" rx="5" /><text class="key-label" x="225" y="35">3</text>
+      </g>
+      <g id="Key4">
+        <rect class="key" x="260" y="10" width="50" height="50" rx="5" /><text class="key-label" x="285" y="35">4</text>
+      </g>
+      <g id="Key5">
+        <rect class="key" x="320" y="10" width="50" height="50" rx="5" /><text class="key-label" x="345" y="35">5</text>
+      </g>
+      <g id="Key6">
+        <rect class="key" x="380" y="10" width="50" height="50" rx="5" /><text class="key-label" x="405" y="35">6</text>
+      </g>
+      <g id="Key7">
+        <rect class="key" x="440" y="10" width="50" height="50" rx="5" /><text class="key-label" x="465" y="35">7</text>
+      </g>
+      <g id="Key8">
+        <rect class="key" x="500" y="10" width="50" height="50" rx="5" /><text class="key-label" x="525" y="35">8</text>
+      </g>
+      <g id="Key9">
+        <rect class="key" x="560" y="10" width="50" height="50" rx="5" /><text class="key-label" x="585" y="35">9</text>
+      </g>
+      <g id="Key0">
+        <rect class="key" x="620" y="10" width="50" height="50" rx="5" /><text class="key-label" x="645" y="35">0</text>
+      </g>
+      <g id="KeyBackspace">
+        <rect class="key" x="680" y="10" width="90" height="50" rx="5" /><text class="key-label" x="725" y="35">⌫</text>
+      </g>
+    </g>
+
+    <!-- Riga 2 -->
+    <g id="row2">
+      <g id="Tab">
+        <rect class="key" x="10" y="70" width="70" height="50" rx="5" /><text class="key-label" x="45" y="95">Tab</text>
+      </g>
+      <g id="KeyQ">
+        <rect class="key" x="90" y="70" width="50" height="50" rx="5" /><text class="key-label" x="115" y="95">Q</text>
+      </g>
+      <g id="KeyW">
+        <rect class="key" x="150" y="70" width="50" height="50" rx="5" /><text class="key-label" x="175" y="95">W</text>
+      </g>
+      <g id="KeyE">
+        <rect class="key" x="210" y="70" width="50" height="50" rx="5" /><text class="key-label" x="235" y="95">E</text>
+      </g>
+      <g id="KeyR">
+        <rect class="key" x="270" y="70" width="50" height="50" rx="5" /><text class="key-label" x="295" y="95">R</text>
+      </g>
+      <g id="KeyT">
+        <rect class="key" x="330" y="70" width="50" height="50" rx="5" /><text class="key-label" x="355" y="95">T</text>
+      </g>
+      <g id="KeyY">
+        <rect class="key" x="390" y="70" width="50" height="50" rx="5" /><text class="key-label" x="415" y="95">Y</text>
+      </g>
+      <g id="KeyU">
+        <rect class="key" x="450" y="70" width="50" height="50" rx="5" /><text class="key-label" x="475" y="95">U</text>
+      </g>
+      <g id="KeyI">
+        <rect class="key" x="510" y="70" width="50" height="50" rx="5" /><text class="key-label" x="535" y="95">I</text>
+      </g>
+      <g id="KeyO">
+        <rect class="key" x="570" y="70" width="50" height="50" rx="5" /><text class="key-label" x="595" y="95">O</text>
+      </g>
+      <g id="KeyP">
+        <rect class="key" x="630" y="70" width="50" height="50" rx="5" /><text class="key-label" x="655" y="95">P</text>
+      </g>
+    </g>
+
+    <!-- Riga 3 -->
+    <g id="row3">
+      <g id="CapsLock">
+        <rect class="key" x="10" y="130" width="90" height="50" rx="5" /><text class="key-label" x="55"
+          y="155">Caps</text>
+      </g>
+      <g id="KeyA">
+        <rect class="key" x="110" y="130" width="50" height="50" rx="5" /><text class="key-label" x="135"
+          y="155">A</text>
+      </g>
+      <g id="KeyS">
+        <rect class="key" x="170" y="130" width="50" height="50" rx="5" /><text class="key-label" x="195"
+          y="155">S</text>
+      </g>
+      <g id="KeyD">
+        <rect class="key" x="230" y="130" width="50" height="50" rx="5" /><text class="key-label" x="255"
+          y="155">D</text>
+      </g>
+      <g id="KeyF">
+        <rect class="key" x="290" y="130" width="50" height="50" rx="5" /><text class="key-label" x="315"
+          y="155">F</text>
+      </g>
+      <g id="KeyG">
+        <rect class="key" x="350" y="130" width="50" height="50" rx="5" /><text class="key-label" x="375"
+          y="155">G</text>
+      </g>
+      <g id="KeyH">
+        <rect class="key" x="410" y="130" width="50" height="50" rx="5" /><text class="key-label" x="435"
+          y="155">H</text>
+      </g>
+      <g id="KeyJ">
+        <rect class="key" x="470" y="130" width="50" height="50" rx="5" /><text class="key-label" x="495"
+          y="155">J</text>
+      </g>
+      <g id="KeyK">
+        <rect class="key" x="530" y="130" width="50" height="50" rx="5" /><text class="key-label" x="555"
+          y="155">K</text>
+      </g>
+      <g id="KeyL">
+        <rect class="key" x="590" y="130" width="50" height="50" rx="5" /><text class="key-label" x="615"
+          y="155">L</text>
+      </g>
+      <g id="ArrowUp">
+        <rect class="key" x="750" y="130" width="50" height="50" rx="5" /><text class="key-label" x="775"
+          y="155">⬆</text>
+      </g>
+      <g id="Enter">
+        <rect class="key" x="650" y="130" width="80" height="50" rx="5" /><text class="key-label" x="690"
+          y="155">↵</text>
+      </g>
+    </g>
+
+    <!-- Riga 4 -->
+    <g id="row4">
+      <g id="ShiftLeft">
+        <rect class="key" x="10" y="190" width="110" height="50" rx="5" /><text class="key-label" x="65"
+          y="215">Shift</text>
+      </g>
+      <g id="KeyZ">
+        <rect class="key" x="130" y="190" width="50" height="50" rx="5" /><text class="key-label" x="155"
+          y="215">Z</text>
+      </g>
+      <g id="KeyX">
+        <rect class="key" x="190" y="190" width="50" height="50" rx="5" /><text class="key-label" x="215"
+          y="215">X</text>
+      </g>
+      <g id="KeyC">
+        <rect class="key" x="250" y="190" width="50" height="50" rx="5" /><text class="key-label" x="275"
+          y="215">C</text>
+      </g>
+      <g id="KeyV">
+        <rect class="key" x="310" y="190" width="50" height="50" rx="5" /><text class="key-label" x="335"
+          y="215">V</text>
+      </g>
+      <g id="KeyB">
+        <rect class="key" x="370" y="190" width="50" height="50" rx="5" /><text class="key-label" x="395"
+          y="215">B</text>
+      </g>
+      <g id="KeyN">
+        <rect class="key" x="430" y="190" width="50" height="50" rx="5" /><text class="key-label" x="455"
+          y="215">N</text>
+      </g>
+      <g id="KeyM">
+        <rect class="key" x="490" y="190" width="50" height="50" rx="5" /><text class="key-label" x="515"
+          y="215">M</text>
+      </g>
+      <g id="ShiftRight">
+        <rect class="key" x="550" y="190" width="110" height="50" rx="5" /><text class="key-label" x="605"
+          y="215">Shift</text>
+      </g>
+      <g id="ArrowLeft">
+        <rect class="key" x="690" y="190" width="50" height="50" rx="5" /><text class="key-label" x="715"
+          y="215">⬅</text>
+      </g>
+      <g id="ArrowDown">
+        <rect class="key" x="750" y="190" width="50" height="50" rx="5" /><text class="key-label" x="775"
+          y="215">⬇</text>
+      </g>
+      <g id="ArrowRight">
+        <rect class="key" x="810" y="190" width="50" height="50" rx="5" /><text class="key-label" x="835"
+          y="215">➡</text>
+      </g>
+    </g>
+
+    <!-- Riga 5: Spacebar -->
+    <g id="row5">
+      <g id="Space">
+        <rect class="key" x="180" y="250" width="400" height="40" rx="5" /><text class="key-label" x="380"
+          y="270">Space</text>
+      </g>
+    </g>
+
+    <g id="MouseBody">
+      <rect x="900" y="30" width="120" height="220" rx="60" ry="60" fill="#ddd" stroke="#aaa" stroke-width="2" />
+    </g>
+    <g id="MouseLeft">
+      <text x="925" y="100" font-size="14" fill="#333" text-anchor="middle">Left</text>
+    </g>
+    <g id="Separator">
+      <path d="M960,30 Q960,80 960,150 Q960,80 962,30 Z" fill="#bbb" />
+    </g>
+    <g id="MouseRight">
+      <text x="995" y="100" font-size="14" fill="#333" text-anchor="middle">Right</text>
+    </g>
+    <g id="MouseWheel-U">
+      <rect x="950" y="80" width="20" height="20" fill="#999" />
+    </g>
+    <g id="MouseWheel-L">
+      <rect x="950" y="100" width="20" height="20" fill="#999" />
+    </g>
+  </svg>
+</div>
+<p style="text-align: center;">
+  click in the black zone to trigger mouse reaction, rover pointer event are bound to the renderer
+</p>
+<div id="canvas"></div>
