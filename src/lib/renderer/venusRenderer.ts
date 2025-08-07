@@ -89,7 +89,7 @@ export class VenusRenderer {
 	//===============================
 	/** Add or Modify a value for a key.
 	 *  Normally it triggers the callbacks for the key, if they exists */
-	public SetSceneState(key: string, value: any, shouldTriggerCallbacks = true) {
+	public SetSceneState<T>(key: string, value: T, shouldTriggerCallbacks = true) {
 		this.sceneState.set(key, value);
 		if (shouldTriggerCallbacks)
 			//trigger observers
@@ -102,8 +102,8 @@ export class VenusRenderer {
 
 	/** Remove a key from the state.
 	 *  Normally it removes the callbacks for the key */
-	public RemoveSceneState(key: string, value: any, shouldRemoveCallbacks = true) {
-		this.sceneState.set(key, value);
+	public RemoveSceneState(key: string, shouldRemoveCallbacks = true) {
+		this.sceneState.delete(key);
 		if (shouldRemoveCallbacks) this.RemoveSceneStateCallback(key);
 	}
 	//===============================
