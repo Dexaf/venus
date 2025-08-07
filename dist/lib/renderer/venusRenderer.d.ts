@@ -90,7 +90,7 @@ export declare class VenusRenderer {
     /** Activate a controller of the current rover */
     ActivateRoverController(roverControllerName: string): void;
     /** Pause a controller of the current rover */
-    PauseRoverControlelr(roverControllerName: string): void;
+    PauseRoverController(roverControllerName: string): void;
     /** Removes rover safely disabling the current controls */
     RemoveRover(roverControllerName: string): void;
     GetRoverByControllerName(roverControllerName: string): Rover;

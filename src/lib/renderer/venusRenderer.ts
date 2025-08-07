@@ -442,7 +442,7 @@ export class VenusRenderer {
 	}
 
 	/** Pause a controller of the current rover */
-	public PauseRoverControlelr(roverControllerName: string) {
+	public PauseRoverController(roverControllerName: string) {
 		if (this.rovers.length < 1) throw new Error("can't activate controller as there is no rover deployed");
 
 		const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
