@@ -32,11 +32,11 @@ export declare class VenusRenderer {
     ModifyCamera: (cameraPartial: Partial<THREE.Camera>) => void;
     /** Add or Modify a value for a key.
      *  Normally it triggers the callbacks for the key, if they exists */
-    SetSceneState(key: string, value: any, shouldTriggerCallbacks?: boolean): void;
+    SetSceneState<T>(key: string, value: T, shouldTriggerCallbacks?: boolean): void;
     GetSceneStateVarValue<T>(key: string): T;
     /** Remove a key from the state.
      *  Normally it removes the callbacks for the key */
-    RemoveSceneState(key: string, value: any, shouldRemoveCallbacks?: boolean): void;
+    RemoveSceneState(key: string, shouldRemoveCallbacks?: boolean): void;
     /** Sets a callback for the state var specified by the key for the obj specified by objKey;
      *  this means it either adds it or modify if the callbackKey already exists
      */

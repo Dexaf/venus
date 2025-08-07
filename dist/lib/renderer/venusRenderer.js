@@ -78,8 +78,8 @@ export class VenusRenderer {
     }
     /** Remove a key from the state.
      *  Normally it removes the callbacks for the key */
-    RemoveSceneState(key, value, shouldRemoveCallbacks = true) {
-        this.sceneState.set(key, value);
+    RemoveSceneState(key, shouldRemoveCallbacks = true) {
+        this.sceneState.delete(key);
         if (shouldRemoveCallbacks)
             this.RemoveSceneStateCallback(key);
     }
