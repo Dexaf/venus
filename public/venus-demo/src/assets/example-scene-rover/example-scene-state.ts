@@ -16,6 +16,7 @@ secondRover.controller = createRoverController(secondControllerName);
 export const ExampleSceneState: TerraformStateInterface = {
   objects: [],
   lights: [],
+  processes: [],
   audios: [],
   roverConfig: {
     rover: [defaultRover, secondRover],

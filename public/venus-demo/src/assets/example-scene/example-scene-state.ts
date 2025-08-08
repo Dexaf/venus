@@ -10,6 +10,7 @@ export const ExampleSceneState: TerraformStateInterface = {
   camera: getCamera(),
   objects: [new Character(), plane, debugSpline, debugGrid],
   lights: [dirLight],
+  processes: [],
   audios: [],
   roverConfig: {
     rover: [],

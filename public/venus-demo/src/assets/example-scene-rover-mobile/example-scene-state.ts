@@ -26,7 +26,7 @@ const cube: BehaviourObjectInterface<Object3D> = {
   key: 'cube',
   onAdd(vr) {
     this.obj!.castShadow = true;
-    this.obj!.rotateY(degToRad(45))
+    this.obj!.rotateY(degToRad(45));
   },
 };
 
@@ -69,6 +69,7 @@ export const ExampleSceneState: TerraformStateInterface = {
   objects: [cube, plane],
   lights: [light],
   audios: [],
+  processes: [],
   roverConfig: {
     rover: [defaultRover],
     activeController: defaultControllerName,
