@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { BehaviourObjectInterface } from "../interfaces/behaviour-object.interface";
 import { AudioConfigInterface } from "../interfaces/audio-config.interface";
 import { Rover } from "../rover/rover";
+import { BehaviourProcessInterface } from "../interfaces/behaviour-process.interface";
 export declare class VenusRenderer {
     renderer: THREE.WebGLRenderer;
     private scene;
@@ -15,6 +16,7 @@ export declare class VenusRenderer {
     private audios;
     private lights;
     private objects3D;
+    private processes;
     private objects3DBehaviourBefore;
     private objects3DBehaviourAfter;
     private lightsBehaviourBefore;
@@ -73,7 +75,7 @@ export declare class VenusRenderer {
     getLight(key: string): BehaviourObjectInterface<THREE.Light> | null;
     /** Modifies properties or callbacks of a given light */
     modifyLight(key: string, light: Partial<BehaviourObjectInterface<THREE.Light>>): void;
-    /** Removes a light and its render callbacks */
+    /** Removes a light and its render callbacks and fires it's onRemove */
     removeLight(key: string): void;
     /** Adds a 3D object with behaviour hooks */
     addObject3D(object3D: BehaviourObjectInterface<THREE.Object3D>): void;
@@ -81,8 +83,14 @@ export declare class VenusRenderer {
     getObject3D(key: string): BehaviourObjectInterface<THREE.Object3D> | null;
     /** Modifies a 3D object’s properties or callbacks */
     modifyObject3D(key: string, object3D: Partial<BehaviourObjectInterface<THREE.Object3D>>): void;
-    /** Removes a 3D object and its render callbacks */
+    /** Removes a 3D object and its render callbacks and fires it's onRemove */
     removeObject3D(key: string): void;
+    /** Adds a process to the processes maps */
+    addProcess(process: BehaviourProcessInterface): void;
+    /** Tries to retrieve a process */
+    getProcess(key: string): BehaviourProcessInterface | null;
+    /** Removes a process and fires it's onRemove */
+    removeProcess(key: string): void;
     /** Get active rover */
     get activeRover(): Rover;
     /** Add a rover object to the renderer */
@@ -110,8 +118,8 @@ export declare class VenusRenderer {
      * @param throwError whether to throw if duplicate/missing
      */
     private flattenBehaviours;
-    /** Executes all registered beforeRender callbacks */
+    /** Executes all beforeRender callbacks */
     private runBehavioursBefore;
-    /** Executes all registered afterRender callbacks */
+    /** Executes all afterRender callbacks */
     private runBehavioursAfter;
 }

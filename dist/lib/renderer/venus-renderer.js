@@ -24,6 +24,7 @@ export class VenusRenderer {
         // Maps for lights and 3D objects with behavior interfaces
         this.lights = new Map();
         this.objects3D = new Map();
+        this.processes = new Map();
         // Arrays of keys to track before/after render callbacks
         this.objects3DBehaviourBefore = [];
         this.objects3DBehaviourAfter = [];
@@ -302,7 +303,7 @@ export class VenusRenderer {
         this.flattenBehaviours(this.lightsBehaviourBefore, key, !!light.beforeRender, false);
         this.flattenBehaviours(this.lightsBehaviourAfter, key, !!light.afterRender, false);
     }
-    /** Removes a light and its render callbacks */
+    /** Removes a light and its render callbacks and fires it's onRemove */
     removeLight(key) {
         const light = this.lights.get(key);
         if (!light)
@@ -350,7 +351,7 @@ export class VenusRenderer {
         this.flattenBehaviours(this.objects3DBehaviourBefore, key, !!object3D.beforeRender, false);
         this.flattenBehaviours(this.objects3DBehaviourAfter, key, !!object3D.afterRender, false);
     }
-    /** Removes a 3D object and its render callbacks */
+    /** Removes a 3D object and its render callbacks and fires it's onRemove */
     removeObject3D(key) {
         const obj = this.objects3D.get(key);
         if (!obj)
@@ -363,6 +364,34 @@ export class VenusRenderer {
         this.removeSceneStateCallback(null, key);
         //don't ask please...
         obj.obj.parent.remove(obj.obj);
+    }
+    //===============================
+    // SECTION: Processes
+    //===============================
+    /** Adds a process to the processes maps */
+    addProcess(process) {
+        if (this.processes.has(process.key)) {
+            throw new Error(`key already used for process ${process.key}`);
+        }
+        this.processes.set(process.key, process);
+        if (!this.scene) {
+            throw new Error("no scene was added to render");
+        }
+        if (process.onAdd)
+            process.onAdd(this);
+    }
+    /** Tries to retrieve a process */
+    getProcess(key) {
+        return this.processes.get(key) ?? null;
+    }
+    /** Removes a process and fires it's onRemove */
+    removeProcess(key) {
+        const prcs = this.processes.get(key);
+        if (!prcs)
+            throw new Error(`no process with name ${key}`);
+        if (prcs.onRemove)
+            prcs.onRemove(this);
+        this.processes.delete(prcs.key);
     }
     //===============================
     // SECTION: Rover handling
@@ -482,8 +511,12 @@ export class VenusRenderer {
             }
         }
     }
-    /** Executes all registered beforeRender callbacks */
+    /** Executes all beforeRender callbacks */
     runBehavioursBefore(delta) {
+        this.processes.forEach((prcs) => {
+            if (prcs.beforeRender)
+                prcs.beforeRender(this, delta);
+        });
         this.objects3DBehaviourBefore.forEach((key) => {
             const obj = this.objects3D.get(key);
             if (!obj || !obj.beforeRender) {
@@ -499,8 +532,12 @@ export class VenusRenderer {
             light.beforeRender(this, delta);
         });
     }
-    /** Executes all registered afterRender callbacks */
+    /** Executes all afterRender callbacks */
     runBehavioursAfter(delta) {
+        this.processes.forEach((prcs) => {
+            if (prcs.afterRender)
+                prcs.afterRender(this, delta);
+        });
         this.objects3DBehaviourAfter.forEach((key) => {
             const obj = this.objects3D.get(key);
             if (!obj || !obj.afterRender) {
