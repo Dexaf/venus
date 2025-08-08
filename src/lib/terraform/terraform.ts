@@ -62,6 +62,12 @@ export class Terraform {
 			this.loadLight(this._currentState!.lights[i]);
 		}
 
+    //PROCESS
+		for (let i = 0; i < this._currentState!.processes.length; i++) {
+			const prcs = this._currentState!.processes[i];
+			this._venusRenderer!.addProcess(prcs);
+		}
+
 		//SOUNDS
 		if (this._currentState!.audios.length > 1) {
 			this._venusRenderer!.addAudioListener(new AudioListener());
