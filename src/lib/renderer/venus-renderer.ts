@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { BehaviourObjectInterface } from "../interfaces/behaviour-object.interface";
 import { AudioConfigInterface } from "../interfaces/audio-config.interface";
 import { Rover } from "../rover/rover";
+import { BehaviourProcessInterface } from "../interfaces/behaviour-process.interface";
 
 export class VenusRenderer {
 	// Three.js WebGL renderer instance
@@ -33,6 +34,7 @@ export class VenusRenderer {
 	// Maps for lights and 3D objects with behavior interfaces
 	private lights: Map<string, BehaviourObjectInterface<THREE.Light>> = new Map();
 	private objects3D: Map<string, BehaviourObjectInterface<THREE.Object3D>> = new Map();
+	private processes: Map<string, BehaviourProcessInterface> = new Map();
 
 	// Arrays of keys to track before/after render callbacks
 	private objects3DBehaviourBefore: string[] = [];
@@ -336,7 +338,7 @@ export class VenusRenderer {
 		this.flattenBehaviours(this.lightsBehaviourAfter, key, !!light.afterRender, false);
 	}
 
-	/** Removes a light and its render callbacks */
+	/** Removes a light and its render callbacks and fires it's onRemove */
 	public removeLight(key: string) {
 		const light = this.lights.get(key);
 		if (!light) throw new Error(`no light with name ${key}`);
@@ -390,7 +392,7 @@ export class VenusRenderer {
 		this.flattenBehaviours(this.objects3DBehaviourAfter, key, !!object3D.afterRender, false);
 	}
 
-	/** Removes a 3D object and its render callbacks */
+	/** Removes a 3D object and its render callbacks and fires it's onRemove */
 	public removeObject3D(key: string) {
 		const obj = this.objects3D.get(key);
 		if (!obj) throw new Error(`no object3D with name ${key}`);
@@ -404,6 +406,39 @@ export class VenusRenderer {
 
 		//don't ask please...
 		obj.obj!.parent!.remove(obj.obj!);
+	}
+
+	//===============================
+	// SECTION: Processes
+	//===============================
+	/** Adds a process to the processes maps */
+	public addProcess(process: BehaviourProcessInterface) {
+		if (this.processes.has(process.key)) {
+			throw new Error(`key already used for process ${process.key}`);
+		}
+
+		this.processes.set(process.key, process);
+		if (!this.scene) {
+			throw new Error("no scene was added to render");
+		}
+
+		if (process.onAdd) process.onAdd(this);
+	}
+
+	/** Tries to retrieve a process */
+	public getProcess(key: string): BehaviourProcessInterface | null {
+		return this.processes.get(key) ?? null;
+	}
+
+	/** Removes a process and fires it's onRemove */
+	public removeProcess(key: string) {
+		const prcs = this.processes.get(key);
+
+		if (!prcs) throw new Error(`no process with name ${key}`);
+
+		if (prcs.onRemove) prcs.onRemove(this);
+
+		this.processes.delete(prcs.key);
 	}
 
 	//===============================
@@ -534,8 +569,12 @@ export class VenusRenderer {
 		}
 	}
 
-	/** Executes all registered beforeRender callbacks */
+	/** Executes all beforeRender callbacks */
 	private runBehavioursBefore(delta: number) {
+		this.processes.forEach((prcs) => {
+			if (prcs.beforeRender) prcs.beforeRender(this, delta);
+		});
+
 		this.objects3DBehaviourBefore.forEach((key) => {
 			const obj = this.objects3D.get(key);
 			if (!obj || !obj.beforeRender) {
@@ -553,8 +592,12 @@ export class VenusRenderer {
 		});
 	}
 
-	/** Executes all registered afterRender callbacks */
+	/** Executes all afterRender callbacks */
 	private runBehavioursAfter(delta: number) {
+		this.processes.forEach((prcs) => {
+			if (prcs.afterRender) prcs.afterRender(this, delta);
+		});
+
 		this.objects3DBehaviourAfter.forEach((key) => {
 			const obj = this.objects3D.get(key);
 			if (!obj || !obj.afterRender) {

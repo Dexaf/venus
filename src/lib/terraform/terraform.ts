@@ -53,9 +53,7 @@ export class Terraform {
 			let currObj;
 			for (let i = 0; i < this._currentState!.objects.length; i++) {
 				currObj = this._currentState!.objects[i];
-				if (currObj) {
-					this.loadObj3D(currObj, gltfLoader);
-				}
+				if (currObj) this.loadObj3D(currObj, gltfLoader);
 			}
 		}
 
