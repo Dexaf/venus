@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PCFShadowMap, PerspectiveCamera } from 'three';
-import { VenusRenderer } from '../../../../dist/lib/renderer/venusRenderer';
-import { Terraform } from '../../../../dist/lib/terraform/terraform';
+import { VenusRenderer } from '../../../../dist/index';
+import { Terraform } from '../../../../dist/index';
 import { loadSceneCommandEventsLocal } from '../assets/example-scene-rover-mobile/load-scene-command-events-local';
 import {
   defaultControllerName,
@@ -24,12 +24,12 @@ export class RoverMobileComponent implements OnInit {
     state.camera = this.setCamera(containerDiv!);
 
     const terraform = new Terraform();
-    terraform.LoadState(state);
-    this.venusRenderer = terraform.LoadRenderer(this.containerId);
+    terraform.loadState(state);
+    this.venusRenderer = terraform.loadRenderer(this.containerId);
     this.venusRenderer.renderer.shadowMap.enabled = true;
     this.venusRenderer.renderer.shadowMap.type = PCFShadowMap;
 
-    this.venusRenderer.StartRender();
+    this.venusRenderer.startRender();
 
     loadSceneCommandEventsLocal(this.venusRenderer);
   }

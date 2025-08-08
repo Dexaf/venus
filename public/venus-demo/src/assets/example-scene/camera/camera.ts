@@ -1,7 +1,7 @@
 import { OrthographicCamera } from 'three';
 
 
-export const GetCamera = () => {
+export const getCamera = () => {
   const camera = new OrthographicCamera();
   return camera;
 };

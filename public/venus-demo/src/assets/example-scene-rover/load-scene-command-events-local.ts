@@ -3,12 +3,12 @@ import {
   Reaction,
   RoverControllerInterface,
 } from '../../../../../dist/lib/interfaces/rover-controller.interface';
-import { VenusRenderer } from '../../../../../dist/lib/renderer/venusRenderer';
-import { Rover } from '../../../../../dist/lib/rover/rover';
+import { VenusRenderer } from '../../../../../dist/index';
+import { Rover } from '../../../../../dist/index';
 import { defaultControllerName } from './example-scene-state';
 
 export const loadSceneCommandEventsLocal = (venusRenderer: VenusRenderer) => {
-  const rover = venusRenderer.GetRoverByControllerName(defaultControllerName);
+  const rover = venusRenderer.getRoverByControllerName(defaultControllerName);
 
   rover.controller.keys.pressed.reactions.set('keyboardFlash', () => {
     pressReaction(rover);

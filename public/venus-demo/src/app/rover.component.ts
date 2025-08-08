@@ -5,8 +5,8 @@ import {
   ExampleSceneState,
   secondControllerName,
 } from '../assets/example-scene-rover/example-scene-state';
-import { VenusRenderer } from '../../../../dist/lib/renderer/venusRenderer';
-import { Terraform } from '../../../../dist/lib/terraform/terraform';
+import { VenusRenderer } from '../../../../dist/index';
+import { Terraform } from '../../../../dist/index';
 import { loadSceneCommandEventsLocal } from '../assets/example-scene-rover/load-scene-command-events-local';
 import { loadSceneCommandEventsGlobal } from '../assets/example-scene-rover/load-scene-command-events-global';
 
@@ -26,9 +26,9 @@ export class RoverComponent implements OnInit {
     state.camera = this.setCamera(containerDiv!);
 
     const terraform = new Terraform();
-    terraform.LoadState(state);
-    this.venusRenderer = terraform.LoadRenderer(this.containerId);
-    this.venusRenderer.StartRender();
+    terraform.loadState(state);
+    this.venusRenderer = terraform.loadRenderer(this.containerId);
+    this.venusRenderer.startRender();
 
     loadSceneCommandEventsLocal(this.venusRenderer);
     loadSceneCommandEventsGlobal(this.venusRenderer);
@@ -39,10 +39,10 @@ export class RoverComponent implements OnInit {
       this.venusRenderer!.activeRover.controller.name == defaultControllerName
     ) {
       this.activeController = secondControllerName;
-      this.venusRenderer!.ActivateRoverController(secondControllerName);
+      this.venusRenderer!.activateRoverController(secondControllerName);
     } else {
       this.activeController = defaultControllerName;
-      this.venusRenderer!.ActivateRoverController(defaultControllerName);
+      this.venusRenderer!.activateRoverController(defaultControllerName);
     }
   }
 

@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { VenusRenderer } from "./venusRenderer";
-export const SetupRenderer = (containerDiv) => {
+import { VenusRenderer } from "./venus-renderer";
+export const setupRenderer = (containerDiv) => {
     const height = containerDiv.clientHeight;
     const width = containerDiv.clientWidth;
     const scene = new THREE.Scene();

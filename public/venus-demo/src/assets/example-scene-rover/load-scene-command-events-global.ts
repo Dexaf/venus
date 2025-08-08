@@ -2,13 +2,13 @@ import {
   PointerButtons,
   Reaction,
   RoverControllerInterface,
-} from '../../../../../dist/lib/interfaces/rover-controller.interface';
-import { VenusRenderer } from '../../../../../dist/lib/renderer/venusRenderer';
+  VenusRenderer
+} from '../../../../../dist/index';
 import { Rover } from '../../../../../dist/lib/rover/rover';
 import { secondControllerName } from './example-scene-state';
 
 export const loadSceneCommandEventsGlobal = (venusRenderer: VenusRenderer) => {
-  const rover = venusRenderer.GetRoverByControllerName(secondControllerName);
+  const rover = venusRenderer.getRoverByControllerName(secondControllerName);
   rover.controller.reactions.set('keyboardFlashPress', () => {
     pressReaction(venusRenderer.activeRover);
   });

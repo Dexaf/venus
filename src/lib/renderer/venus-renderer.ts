@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { IBehaviourObject } from "../interfaces/behaviourObject.interface";
-import { IAudioConfig } from "../interfaces/audioConfig.interface";
+import { BehaviourObjectInterface } from "../interfaces/behaviour-object.interface";
+import { AudioConfigInterface } from "../interfaces/audio-config.interface";
 import { Rover } from "../rover/rover";
 
 export class VenusRenderer {
@@ -31,8 +31,8 @@ export class VenusRenderer {
 	private audios: Map<string, THREE.Audio<GainNode | PannerNode> | THREE.PositionalAudio> = new Map();
 
 	// Maps for lights and 3D objects with behavior interfaces
-	private lights: Map<string, IBehaviourObject<THREE.Light, any>> = new Map();
-	private objects3D: Map<string, IBehaviourObject<THREE.Object3D, any>> = new Map();
+	private lights: Map<string, BehaviourObjectInterface<THREE.Light>> = new Map();
+	private objects3D: Map<string, BehaviourObjectInterface<THREE.Object3D>> = new Map();
 
 	// Arrays of keys to track before/after render callbacks
 	private objects3DBehaviourBefore: string[] = [];
@@ -56,11 +56,11 @@ export class VenusRenderer {
 	//===============================
 	// SECTION: Scene
 	//===============================
-	public SetSize = (width: number, height: number) => {
+	public setSize = (width: number, height: number) => {
 		this.renderer.setSize(width, height);
 	};
 
-	public GetCanvas = () => {
+	public getCanvas = () => {
 		return this.renderer.domElement;
 	};
 
@@ -68,12 +68,12 @@ export class VenusRenderer {
 	// SECTION: Camera
 	//===============================
 	/** Assigns the camera to be used for rendering */
-	public AddCamera = (camera: THREE.Camera) => {
+	public addCamera = (camera: THREE.Camera) => {
 		this.camera = camera;
 	};
 
 	/** Modifies current camera parameters */
-	public ModifyCamera = (cameraPartial: Partial<THREE.Camera>) => {
+	public modifyCamera = (cameraPartial: Partial<THREE.Camera>) => {
 		if (this.camera == null) {
 			throw new Error("can't modify camera as there's no camera");
 		}
@@ -89,22 +89,22 @@ export class VenusRenderer {
 	//===============================
 	/** Add or Modify a value for a key.
 	 *  Normally it triggers the callbacks for the key, if they exists */
-	public SetSceneState<T>(key: string, value: T, shouldTriggerCallbacks = true) {
+	public setSceneState<T>(key: string, value: T, shouldTriggerCallbacks = true) {
 		this.sceneState.set(key, value);
 		if (shouldTriggerCallbacks)
 			//trigger observers
-			this.CallStateVarCallbacks(key);
+			this.callStateVarCallbacks(key);
 	}
 
-	public GetSceneStateVarValue<T>(key: string) {
+	public getSceneStateVarValue<T>(key: string) {
 		return this.sceneState.get(key) as T;
 	}
 
 	/** Remove a key from the state.
 	 *  Normally it removes the callbacks for the key */
-	public RemoveSceneState(key: string, shouldRemoveCallbacks = true) {
+	public removeSceneState(key: string, shouldRemoveCallbacks = true) {
 		this.sceneState.delete(key);
-		if (shouldRemoveCallbacks) this.RemoveSceneStateCallback(key);
+		if (shouldRemoveCallbacks) this.removeSceneStateCallback(key);
 	}
 	//===============================
 	// SECTION: Scene state callback
@@ -112,7 +112,7 @@ export class VenusRenderer {
 	/** Sets a callback for the state var specified by the key for the obj specified by objKey;
 	 *  this means it either adds it or modify if the callbackKey already exists
 	 */
-	SetSceneStateCallback(stateVarKey: string, objKey: string, callbackKey: string, callback: Function) {
+	setSceneStateCallback(stateVarKey: string, objKey: string, callbackKey: string, callback: Function) {
 		const stateVar = this.sceneState.get(stateVarKey);
 		if (stateVar == null) {
 			throw new Error(`can't add event callback to state var ${stateVarKey} as the state var can't be found`);
@@ -155,7 +155,7 @@ export class VenusRenderer {
 	 * (stateVarKey > observerKey): removes all the istances for the observer for the state var
 	 * (stateVarKey > observerKey > callbackKey): removes the callback for the observer of the state var
 	 */
-	RemoveSceneStateCallback(stateVarKey: string | null = null, observerKey: string | null = null, callbackKey: string | null = null) {
+	removeSceneStateCallback(stateVarKey: string | null = null, observerKey: string | null = null, callbackKey: string | null = null) {
 		//if we have no specific state var to work with...
 		if (stateVarKey == null) {
 			if (observerKey == null) throw new Error("can't remove any callback with no usefull param to do so");
@@ -182,7 +182,7 @@ export class VenusRenderer {
 		}
 	}
 
-	CallStateVarCallbacks(key: string) {
+	callStateVarCallbacks(key: string) {
 		const observersCallbacks = this.sceneStateOberservers.get(key);
 		if (observersCallbacks == null) throw new Error(`can't call callbacks for state var ${key} as it's not found`);
 
@@ -196,7 +196,7 @@ export class VenusRenderer {
 	// SECTION: Audio
 	//===============================
 	/** Attaches an audio listener to the camera (camera must be set first) */
-	public AddAudioListener(audioListener: THREE.AudioListener) {
+	public addAudioListener(audioListener: THREE.AudioListener) {
 		if (this.camera == null) {
 			throw new Error("can't add audio listener as there's no camera");
 		}
@@ -210,7 +210,7 @@ export class VenusRenderer {
 	 * Chooses positional or non-positional audio based on config.
 	 * Generates a key from the file path if not provided.
 	 */
-	public AddAudio(audioConfig: IAudioConfig) {
+	public addAudio(audioConfig: AudioConfigInterface) {
 		if (this.audioListener == null) {
 			throw new Error("can't add audio as there's no audio listener");
 		}
@@ -246,7 +246,7 @@ export class VenusRenderer {
 			if (sound instanceof THREE.PositionalAudio) {
 				sound.setRefDistance(audioConfig.positionalConfig!.refDistance);
 				if (audioConfig.positionalConfig!.meshToAttachKey) {
-					const obj3D = this.GetObject3D(audioConfig.positionalConfig!.meshToAttachKey);
+					const obj3D = this.getObject3D(audioConfig.positionalConfig!.meshToAttachKey);
 					if (obj3D) obj3D.obj!.add(sound);
 				}
 			}
@@ -254,7 +254,7 @@ export class VenusRenderer {
 	}
 
 	/** Plays the audio associated with the given key */
-	public PlayAudio(key: string) {
+	public playAudio(key: string) {
 		const audio = this.audios.get(key);
 		if (!audio) {
 			throw new Error(`no audio with name ${key}`);
@@ -263,7 +263,7 @@ export class VenusRenderer {
 	}
 
 	/** Removes and disposes of the audio resource by key */
-	public RemoveAudio(key: string) {
+	public removeAudio(key: string) {
 		const removed = this.audios.delete(key);
 		if (!removed) {
 			throw new Error(`no audio with name ${key}`);
@@ -274,8 +274,8 @@ export class VenusRenderer {
 	// SECTION: Tagging
 	//===============================
 	/** Returns all lights and objects that match the specified tag */
-	public GetByTag(tag: string): IBehaviourObject<THREE.Light | THREE.Object3D, any>[] {
-		const result: IBehaviourObject<THREE.Light | THREE.Object3D, any>[] = [];
+	public getByTag(tag: string): BehaviourObjectInterface<THREE.Light | THREE.Object3D>[] {
+		const result: BehaviourObjectInterface<THREE.Light | THREE.Object3D>[] = [];
 		this.objects3D.forEach((obj) => {
 			if (obj.tag === tag) result.push(obj);
 		});
@@ -286,12 +286,12 @@ export class VenusRenderer {
 	}
 
 	/** Deletes all lights and objects associated with the specified tag */
-	public DeleteByTag(tag: string): IBehaviourObject<THREE.Light | THREE.Object3D, any>[] {
+	public deleteByTag(tag: string): BehaviourObjectInterface<THREE.Light | THREE.Object3D>[] {
 		this.objects3D.forEach((obj, key) => {
-			if (obj.tag === tag) this.RemoveObject3D(key);
+			if (obj.tag === tag) this.removeObject3D(key);
 		});
 		this.lights.forEach((light, key) => {
-			if (light.tag === tag) this.RemoveLight(key);
+			if (light.tag === tag) this.removeLight(key);
 		});
 		return [];
 	}
@@ -300,7 +300,7 @@ export class VenusRenderer {
 	// SECTION: Lights
 	//===============================
 	/** Adds a light with behaviour hooks */
-	public AddLights<T>(light: IBehaviourObject<THREE.Light, T>) {
+	public addLights(light: BehaviourObjectInterface<THREE.Light>) {
 		if (this.lights.has(light.key)) {
 			throw new Error(`key already used for light ${light.key}`);
 		}
@@ -312,41 +312,41 @@ export class VenusRenderer {
 			throw new Error("no scene was added to render");
 		}
 		this.scene.add(light.obj!);
-		if (light.OnAdd) light.OnAdd(this);
+		if (light.onAdd) light.onAdd(this);
 
 		// Register before/after render callbacks if present
-		if (light.BeforeRender) this.FlattenBehaviours(this.lightsBehaviourBefore, light.key);
-		if (light.AfterRender) this.FlattenBehaviours(this.lightsBehaviourAfter, light.key);
+		if (light.beforeRender) this.flattenBehaviours(this.lightsBehaviourBefore, light.key);
+		if (light.afterRender) this.flattenBehaviours(this.lightsBehaviourAfter, light.key);
 	}
 
 	/** Retrieves a light behaviour object by key */
-	public GetLight(key: string): IBehaviourObject<THREE.Light, any> | null {
+	public getLight(key: string): BehaviourObjectInterface<THREE.Light> | null {
 		return this.lights.get(key) ?? null;
 	}
 
 	/** Modifies properties or callbacks of a given light */
-	public ModifyLight(key: string, light: Partial<IBehaviourObject<THREE.Light, any>>) {
+	public modifyLight(key: string, light: Partial<BehaviourObjectInterface<THREE.Light>>) {
 		const orig = this.lights.get(key);
 		if (!orig) throw new Error(`no light with name ${key}`);
 
 		Object.assign(orig, light);
 
 		// Update before/after render registration
-		this.FlattenBehaviours(this.lightsBehaviourBefore, key, !!light.BeforeRender, false);
-		this.FlattenBehaviours(this.lightsBehaviourAfter, key, !!light.AfterRender, false);
+		this.flattenBehaviours(this.lightsBehaviourBefore, key, !!light.beforeRender, false);
+		this.flattenBehaviours(this.lightsBehaviourAfter, key, !!light.afterRender, false);
 	}
 
 	/** Removes a light and its render callbacks */
-	public RemoveLight(key: string) {
+	public removeLight(key: string) {
 		const light = this.lights.get(key);
 		if (!light) throw new Error(`no light with name ${key}`);
 
-		if (light.OnRemove) light.OnRemove(this);
+		if (light.onRemove) light.onRemove(this);
 		this.lights.delete(key);
 
-		this.FlattenBehaviours(this.lightsBehaviourBefore, key, false);
-		this.FlattenBehaviours(this.lightsBehaviourAfter, key, false);
-		this.RemoveSceneStateCallback(null, key);
+		this.flattenBehaviours(this.lightsBehaviourBefore, key, false);
+		this.flattenBehaviours(this.lightsBehaviourAfter, key, false);
+		this.removeSceneStateCallback(null, key);
 
 		//don't ask please...
 		light.obj!.parent!.remove(light.obj!);
@@ -356,7 +356,7 @@ export class VenusRenderer {
 	// SECTION: 3D Objects
 	//===============================
 	/** Adds a 3D object with behaviour hooks */
-	public AddObject3D(object3D: IBehaviourObject<THREE.Object3D, any>) {
+	public addObject3D(object3D: BehaviourObjectInterface<THREE.Object3D>) {
 		if (this.objects3D.has(object3D.key)) {
 			throw new Error(`key already used for objects3D ${object3D.key}`);
 		}
@@ -368,39 +368,39 @@ export class VenusRenderer {
 			throw new Error("no scene was added to render");
 		}
 		this.scene.add(object3D.obj!);
-		if (object3D.OnAdd) object3D.OnAdd(this);
+		if (object3D.onAdd) object3D.onAdd(this);
 
-		if (object3D.BeforeRender) this.FlattenBehaviours(this.objects3DBehaviourBefore, object3D.key);
-		if (object3D.AfterRender) this.FlattenBehaviours(this.objects3DBehaviourAfter, object3D.key);
+		if (object3D.beforeRender) this.flattenBehaviours(this.objects3DBehaviourBefore, object3D.key);
+		if (object3D.afterRender) this.flattenBehaviours(this.objects3DBehaviourAfter, object3D.key);
 	}
 
 	/** Retrieves a 3D object behaviour by key */
-	public GetObject3D<T>(key: string): IBehaviourObject<THREE.Object3D, T> | null {
+	public getObject3D(key: string): BehaviourObjectInterface<THREE.Object3D> | null {
 		return this.objects3D.get(key) ?? null;
 	}
 
 	/** Modifies a 3D object’s properties or callbacks */
-	public ModifyObject3D(key: string, object3D: Partial<IBehaviourObject<THREE.Object3D, any>>) {
+	public modifyObject3D(key: string, object3D: Partial<BehaviourObjectInterface<THREE.Object3D>>) {
 		const orig = this.objects3D.get(key);
 		if (!orig) throw new Error(`no object3D with name ${key}`);
 
 		Object.assign(orig, object3D);
 
-		this.FlattenBehaviours(this.objects3DBehaviourBefore, key, !!object3D.BeforeRender, false);
-		this.FlattenBehaviours(this.objects3DBehaviourAfter, key, !!object3D.AfterRender, false);
+		this.flattenBehaviours(this.objects3DBehaviourBefore, key, !!object3D.beforeRender, false);
+		this.flattenBehaviours(this.objects3DBehaviourAfter, key, !!object3D.afterRender, false);
 	}
 
 	/** Removes a 3D object and its render callbacks */
-	public RemoveObject3D(key: string) {
+	public removeObject3D(key: string) {
 		const obj = this.objects3D.get(key);
 		if (!obj) throw new Error(`no object3D with name ${key}`);
 
-		if (obj.OnRemove) obj.OnRemove(this);
+		if (obj.onRemove) obj.onRemove(this);
 		this.objects3D.delete(key);
 
-		this.FlattenBehaviours(this.objects3DBehaviourBefore, key, false);
-		this.FlattenBehaviours(this.objects3DBehaviourAfter, key, false);
-		this.RemoveSceneStateCallback(null, key);
+		this.flattenBehaviours(this.objects3DBehaviourBefore, key, false);
+		this.flattenBehaviours(this.objects3DBehaviourAfter, key, false);
+		this.removeSceneStateCallback(null, key);
 
 		//don't ask please...
 		obj.obj!.parent!.remove(obj.obj!);
@@ -420,12 +420,12 @@ export class VenusRenderer {
 	}
 
 	/** Add a rover object to the renderer */
-	public DeployRover(rover: Rover) {
+	public deployRover(rover: Rover) {
 		this.rovers.push(rover);
 	}
 
 	/** Activate a controller of the current rover */
-	public ActivateRoverController(roverControllerName: string) {
+	public activateRoverController(roverControllerName: string) {
 		if (this.rovers.length < 1) throw new Error("can't activate controller as there is no rover deployed");
 
 		const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
@@ -433,16 +433,16 @@ export class VenusRenderer {
 
 		for (let i = 0; i < this.rovers.length; i++) {
 			const rover = this.rovers[i];
-			rover.stop(this.GetCanvas());
+			rover.stop(this.getCanvas());
 		}
 
-		this.rovers[ri].initialize(this.GetCanvas());
+		this.rovers[ri].initialize(this.getCanvas());
 
 		this.activeRoverName = roverControllerName;
 	}
 
 	/** Pause a controller of the current rover */
-	public PauseRoverController(roverControllerName: string) {
+	public pauseRoverController(roverControllerName: string) {
 		if (this.rovers.length < 1) throw new Error("can't activate controller as there is no rover deployed");
 
 		const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
@@ -451,7 +451,7 @@ export class VenusRenderer {
 	}
 
 	/** Removes rover safely disabling the current controls */
-	public RemoveRover(roverControllerName: string) {
+	public removeRover(roverControllerName: string) {
 		if (this.rovers.length < 1) throw new Error("can't remove controller as there is no rover deployed");
 
 		const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
@@ -459,13 +459,13 @@ export class VenusRenderer {
 		const rover = this.rovers[ri];
 
 		if (rover.isActive) {
-			rover.stop(this.GetCanvas());
+			rover.stop(this.getCanvas());
 			this.activeRoverName = "";
 		}
 		this.rovers.splice(ri, 1);
 	}
 
-	public GetRoverByControllerName(roverControllerName: string) {
+	public getRoverByControllerName(roverControllerName: string) {
 		if (this.rovers.length < 1) throw new Error("can't find controller as there is no rover deployed");
 
 		const ri = this.rovers.findIndex((r) => r.controller?.name == roverControllerName);
@@ -477,34 +477,34 @@ export class VenusRenderer {
 	// SECTION: Core Rendering Loop
 	//===============================
 	/** Initializes clock and starts the animation loop */
-	public StartRender() {
+	public startRender() {
 		if (!this.scene) throw new Error("no scene was added to render");
 		if (!this.camera) throw new Error("no camera was added to render");
 
 		this.clock = new THREE.Clock();
-		this.renderer.setAnimationLoop(this.Animate.bind(this));
+		this.renderer.setAnimationLoop(this.animate.bind(this));
 	}
 
 	/** Internal animation callback for each frame */
-	private Animate() {
+	private animate() {
 		const delta = this.clock!.getDelta();
 		this.objects3D.forEach((o3D) => {
 			o3D.animationMixer?.update(delta);
 		});
 		this.timeFromStart += delta;
 		this._lastDelta = delta;
-		this.RunBehavioursBefore(delta);
+		this.runBehavioursBefore(delta);
 		this.renderer.render(this.scene!, this.camera!);
-		this.RunBehavioursAfter(delta);
+		this.runBehavioursAfter(delta);
 	}
 
 	/** Returns time elapsed since rendering started */
-	public GetTimeFromStart() {
+	public getTimeFromStart() {
 		return this.timeFromStart;
 	}
 
 	/** Resets the elapsed time counter to zero */
-	public ResetTimeFromStart() {
+	public resetTimeFromStart() {
 		this.timeFromStart = 0;
 	}
 
@@ -518,7 +518,7 @@ export class VenusRenderer {
 	 * @param isAdding true to add, false to remove
 	 * @param throwError whether to throw if duplicate/missing
 	 */
-	private FlattenBehaviours(arrayToFlatten: string[], key: string, isAdding: boolean = true, throwError: boolean = true) {
+	private flattenBehaviours(arrayToFlatten: string[], key: string, isAdding: boolean = true, throwError: boolean = true) {
 		const idx = arrayToFlatten.indexOf(key);
 
 		if (isAdding) {
@@ -534,41 +534,41 @@ export class VenusRenderer {
 		}
 	}
 
-	/** Executes all registered BeforeRender callbacks */
-	private RunBehavioursBefore(delta: number) {
+	/** Executes all registered beforeRender callbacks */
+	private runBehavioursBefore(delta: number) {
 		this.objects3DBehaviourBefore.forEach((key) => {
 			const obj = this.objects3D.get(key);
-			if (!obj || !obj.BeforeRender) {
+			if (!obj || !obj.beforeRender) {
 				throw new Error(`can't run before behaviour for key ${key}`);
 			}
-			obj.BeforeRender(this, delta);
+			obj.beforeRender(this, delta);
 		});
 
 		this.lightsBehaviourBefore.forEach((key) => {
 			const light = this.lights.get(key);
-			if (!light || !light.BeforeRender) {
+			if (!light || !light.beforeRender) {
 				throw new Error(`can't run before behaviour for light ${key}`);
 			}
-			light.BeforeRender(this, delta);
+			light.beforeRender(this, delta);
 		});
 	}
 
-	/** Executes all registered AfterRender callbacks */
-	private RunBehavioursAfter(delta: number) {
+	/** Executes all registered afterRender callbacks */
+	private runBehavioursAfter(delta: number) {
 		this.objects3DBehaviourAfter.forEach((key) => {
 			const obj = this.objects3D.get(key);
-			if (!obj || !obj.AfterRender) {
+			if (!obj || !obj.afterRender) {
 				throw new Error(`can't run after behaviour for key ${key}`);
 			}
-			obj.AfterRender(this, delta);
+			obj.afterRender(this, delta);
 		});
 
 		this.lightsBehaviourAfter.forEach((key) => {
 			const light = this.lights.get(key);
-			if (!light || !light.AfterRender) {
+			if (!light || !light.afterRender) {
 				throw new Error(`can't run after behaviour for light ${key}`);
 			}
-			light.AfterRender(this, delta);
+			light.afterRender(this, delta);
 		});
 	}
 }

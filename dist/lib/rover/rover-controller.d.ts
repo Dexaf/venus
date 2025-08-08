@@ -1,2 +1,2 @@
 import { RoverControllerInterface } from "../interfaces/rover-controller.interface";
-export declare const CreateRoverController: (name: string) => RoverControllerInterface;
+export declare const createRoverController: (name: string) => RoverControllerInterface;

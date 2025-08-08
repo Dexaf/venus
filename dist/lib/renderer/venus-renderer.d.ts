@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { IBehaviourObject } from "../interfaces/behaviourObject.interface";
-import { IAudioConfig } from "../interfaces/audioConfig.interface";
+import { BehaviourObjectInterface } from "../interfaces/behaviour-object.interface";
+import { AudioConfigInterface } from "../interfaces/audio-config.interface";
 import { Rover } from "../rover/rover";
 export declare class VenusRenderer {
     renderer: THREE.WebGLRenderer;
@@ -24,23 +24,23 @@ export declare class VenusRenderer {
     get lastDelta(): number;
     private clock;
     constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene);
-    SetSize: (width: number, height: number) => void;
-    GetCanvas: () => HTMLCanvasElement;
+    setSize: (width: number, height: number) => void;
+    getCanvas: () => HTMLCanvasElement;
     /** Assigns the camera to be used for rendering */
-    AddCamera: (camera: THREE.Camera) => void;
+    addCamera: (camera: THREE.Camera) => void;
     /** Modifies current camera parameters */
-    ModifyCamera: (cameraPartial: Partial<THREE.Camera>) => void;
+    modifyCamera: (cameraPartial: Partial<THREE.Camera>) => void;
     /** Add or Modify a value for a key.
      *  Normally it triggers the callbacks for the key, if they exists */
-    SetSceneState<T>(key: string, value: T, shouldTriggerCallbacks?: boolean): void;
-    GetSceneStateVarValue<T>(key: string): T;
+    setSceneState<T>(key: string, value: T, shouldTriggerCallbacks?: boolean): void;
+    getSceneStateVarValue<T>(key: string): T;
     /** Remove a key from the state.
      *  Normally it removes the callbacks for the key */
-    RemoveSceneState(key: string, shouldRemoveCallbacks?: boolean): void;
+    removeSceneState(key: string, shouldRemoveCallbacks?: boolean): void;
     /** Sets a callback for the state var specified by the key for the obj specified by objKey;
      *  this means it either adds it or modify if the callbackKey already exists
      */
-    SetSceneStateCallback(stateVarKey: string, objKey: string, callbackKey: string, callback: Function): void;
+    setSceneStateCallback(stateVarKey: string, objKey: string, callbackKey: string, callback: Function): void;
     /**
      * It removes entries in the state callback map, the operation is done
      * depending by the params.
@@ -49,59 +49,59 @@ export declare class VenusRenderer {
      * (stateVarKey > observerKey): removes all the istances for the observer for the state var
      * (stateVarKey > observerKey > callbackKey): removes the callback for the observer of the state var
      */
-    RemoveSceneStateCallback(stateVarKey?: string | null, observerKey?: string | null, callbackKey?: string | null): void;
-    CallStateVarCallbacks(key: string): void;
+    removeSceneStateCallback(stateVarKey?: string | null, observerKey?: string | null, callbackKey?: string | null): void;
+    callStateVarCallbacks(key: string): void;
     /** Attaches an audio listener to the camera (camera must be set first) */
-    AddAudioListener(audioListener: THREE.AudioListener): void;
+    addAudioListener(audioListener: THREE.AudioListener): void;
     /**
      * Creates and configures an audio source.
      * Chooses positional or non-positional audio based on config.
      * Generates a key from the file path if not provided.
      */
-    AddAudio(audioConfig: IAudioConfig): void;
+    addAudio(audioConfig: AudioConfigInterface): void;
     /** Plays the audio associated with the given key */
-    PlayAudio(key: string): void;
+    playAudio(key: string): void;
     /** Removes and disposes of the audio resource by key */
-    RemoveAudio(key: string): void;
+    removeAudio(key: string): void;
     /** Returns all lights and objects that match the specified tag */
-    GetByTag(tag: string): IBehaviourObject<THREE.Light | THREE.Object3D, any>[];
+    getByTag(tag: string): BehaviourObjectInterface<THREE.Light | THREE.Object3D>[];
     /** Deletes all lights and objects associated with the specified tag */
-    DeleteByTag(tag: string): IBehaviourObject<THREE.Light | THREE.Object3D, any>[];
+    deleteByTag(tag: string): BehaviourObjectInterface<THREE.Light | THREE.Object3D>[];
     /** Adds a light with behaviour hooks */
-    AddLights<T>(light: IBehaviourObject<THREE.Light, T>): void;
+    addLights(light: BehaviourObjectInterface<THREE.Light>): void;
     /** Retrieves a light behaviour object by key */
-    GetLight(key: string): IBehaviourObject<THREE.Light, any> | null;
+    getLight(key: string): BehaviourObjectInterface<THREE.Light> | null;
     /** Modifies properties or callbacks of a given light */
-    ModifyLight(key: string, light: Partial<IBehaviourObject<THREE.Light, any>>): void;
+    modifyLight(key: string, light: Partial<BehaviourObjectInterface<THREE.Light>>): void;
     /** Removes a light and its render callbacks */
-    RemoveLight(key: string): void;
+    removeLight(key: string): void;
     /** Adds a 3D object with behaviour hooks */
-    AddObject3D(object3D: IBehaviourObject<THREE.Object3D, any>): void;
+    addObject3D(object3D: BehaviourObjectInterface<THREE.Object3D>): void;
     /** Retrieves a 3D object behaviour by key */
-    GetObject3D<T>(key: string): IBehaviourObject<THREE.Object3D, T> | null;
+    getObject3D(key: string): BehaviourObjectInterface<THREE.Object3D> | null;
     /** Modifies a 3D object’s properties or callbacks */
-    ModifyObject3D(key: string, object3D: Partial<IBehaviourObject<THREE.Object3D, any>>): void;
+    modifyObject3D(key: string, object3D: Partial<BehaviourObjectInterface<THREE.Object3D>>): void;
     /** Removes a 3D object and its render callbacks */
-    RemoveObject3D(key: string): void;
+    removeObject3D(key: string): void;
     /** Get active rover */
     get activeRover(): Rover;
     /** Add a rover object to the renderer */
-    DeployRover(rover: Rover): void;
+    deployRover(rover: Rover): void;
     /** Activate a controller of the current rover */
-    ActivateRoverController(roverControllerName: string): void;
+    activateRoverController(roverControllerName: string): void;
     /** Pause a controller of the current rover */
-    PauseRoverController(roverControllerName: string): void;
+    pauseRoverController(roverControllerName: string): void;
     /** Removes rover safely disabling the current controls */
-    RemoveRover(roverControllerName: string): void;
-    GetRoverByControllerName(roverControllerName: string): Rover;
+    removeRover(roverControllerName: string): void;
+    getRoverByControllerName(roverControllerName: string): Rover;
     /** Initializes clock and starts the animation loop */
-    StartRender(): void;
+    startRender(): void;
     /** Internal animation callback for each frame */
-    private Animate;
+    private animate;
     /** Returns time elapsed since rendering started */
-    GetTimeFromStart(): number;
+    getTimeFromStart(): number;
     /** Resets the elapsed time counter to zero */
-    ResetTimeFromStart(): void;
+    resetTimeFromStart(): void;
     /**
      * Adds or removes a key from a before/after render behavior array.
      * @param arrayToFlatten the target behavior array
@@ -109,9 +109,9 @@ export declare class VenusRenderer {
      * @param isAdding true to add, false to remove
      * @param throwError whether to throw if duplicate/missing
      */
-    private FlattenBehaviours;
-    /** Executes all registered BeforeRender callbacks */
-    private RunBehavioursBefore;
-    /** Executes all registered AfterRender callbacks */
-    private RunBehavioursAfter;
+    private flattenBehaviours;
+    /** Executes all registered beforeRender callbacks */
+    private runBehavioursBefore;
+    /** Executes all registered afterRender callbacks */
+    private runBehavioursAfter;
 }

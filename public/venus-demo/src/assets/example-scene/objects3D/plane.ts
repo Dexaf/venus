@@ -1,5 +1,5 @@
 import { PlaneGeometry, MeshStandardMaterial, Mesh, Object3D } from 'three';
-import { IBehaviourObject } from '../../../../../../dist/lib/interfaces/behaviourObject.interface';
+import { BehaviourObjectInterface } from '../../../../../../dist/index';
 
 const planeKey = 'plane';
 
@@ -15,7 +15,7 @@ const getPlane = () => {
   return plane;
 };
 
-export const plane: IBehaviourObject<Object3D, any> = {
+export const plane: BehaviourObjectInterface<Object3D> = {
   key: planeKey,
   obj: getPlane(),
 };

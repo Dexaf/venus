@@ -1,6 +1,6 @@
 import { RoverControllerInterface, TouchInputDataInterface } from "../interfaces/rover-controller.interface";
 
-export const CreateRoverController = (name: string): RoverControllerInterface => {
+export const createRoverController = (name: string): RoverControllerInterface => {
 	return {
 		keys: {
 			holded: {

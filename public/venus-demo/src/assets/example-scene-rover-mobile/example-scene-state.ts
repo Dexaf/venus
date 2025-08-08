@@ -1,31 +1,30 @@
 import {
   BoxGeometry,
   DirectionalLight,
-  DirectionalLightHelper,
   Mesh,
   MeshPhongMaterial,
   Object3D,
   PlaneGeometry,
 } from 'three';
 import {
-  CreateRoverController,
+  createRoverController,
   Rover,
-  ITerraformState,
-  IBehaviourObject,
+  TerraformStateInterface,
+  BehaviourObjectInterface,
 } from '../../../../../dist/index';
 import { degToRad } from 'three/src/math/MathUtils.js';
 
 export const defaultControllerName = 'default';
 
 const defaultRover = new Rover();
-defaultRover.controller = CreateRoverController(defaultControllerName);
+defaultRover.controller = createRoverController(defaultControllerName);
 
 const cubeGeo = new BoxGeometry(1, 1, 1);
 const cubeMat = new MeshPhongMaterial({ color: '#8AC' });
-const cube: IBehaviourObject<Object3D, null> = {
+const cube: BehaviourObjectInterface<Object3D> = {
   obj: new Mesh(cubeGeo, cubeMat),
   key: 'cube',
-  OnAdd(vr) {
+  onAdd(vr) {
     this.obj!.castShadow = true;
     this.obj!.rotateY(degToRad(45))
   },
@@ -33,10 +32,10 @@ const cube: IBehaviourObject<Object3D, null> = {
 
 const planeGeo = new PlaneGeometry(200, 200);
 const planeMat = new MeshPhongMaterial({ color: '#fff' });
-const plane: IBehaviourObject<Object3D, null> = {
+const plane: BehaviourObjectInterface<Object3D> = {
   obj: new Mesh(planeGeo, planeMat),
   key: 'plane',
-  OnAdd(venusRenderer) {
+  onAdd(venusRenderer) {
     this.obj!.traverse((o) => {
       o!.receiveShadow = true;
     });
@@ -51,7 +50,7 @@ const objLight = new DirectionalLight(color, intensity);
 const light = {
   key: 'light',
   obj: objLight,
-  OnAdd(venusRenderer) {
+  onAdd() {
     light.obj!.position.set(4, 5, 5);
     light.obj!.target.position.set(0, 0, 0);
     light.obj!.castShadow = true;
@@ -64,9 +63,9 @@ const light = {
     light.obj!.shadow.camera.left = -cameraSize;
     light.obj!.shadow.bias = 0.01;
   },
-} as IBehaviourObject<DirectionalLight, null>;
+} as BehaviourObjectInterface<DirectionalLight>;
 
-export const ExampleSceneState: ITerraformState = {
+export const ExampleSceneState: TerraformStateInterface = {
   objects: [cube, plane],
   lights: [light],
   audios: [],

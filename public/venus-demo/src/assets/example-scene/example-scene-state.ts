@@ -1,14 +1,14 @@
-import { ITerraformState } from '../../../../../dist/lib/interfaces/terraformState.interface';
-import { GetCamera } from './camera/camera';
-import { dirLight } from './lights/dirLight';
-import { character } from './objects3D/character.v2';
-import { debugGrid } from './objects3D/debugGrid';
+import { TerraformStateInterface } from '../../../../../dist/index';
+import { getCamera } from './camera/camera';
+import { dirLight } from './lights/dir-light';
+import { Character } from './objects3D/character.v2';
+import { debugGrid } from './objects3D/debug-grid';
 import { plane } from './objects3D/plane';
-import { debugSpline } from './objects3D/debugSpline';
+import { debugSpline } from './objects3D/debug-spline';
 
-export const ExampleSceneState: ITerraformState = {
-  camera: GetCamera(),
-  objects: [new character(), plane, debugSpline, debugGrid],
+export const ExampleSceneState: TerraformStateInterface = {
+  camera: getCamera(),
+  objects: [new Character(), plane, debugSpline, debugGrid],
   lights: [dirLight],
   audios: [],
   roverConfig: {

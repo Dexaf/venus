@@ -1,6 +1,6 @@
 import { GLTFLoader } from "three/examples/jsm/Addons";
-import { SetupRenderer } from "../renderer/setupRenderer";
 import { AudioListener } from "three";
+import { setupRenderer } from "../renderer/setup-renderer";
 export class Terraform {
     constructor(state, venusRenderer) {
         this._currentState = null;
@@ -10,25 +10,25 @@ export class Terraform {
         if (state)
             this._currentState = state;
     }
-    LoadState(state) {
+    loadState(state) {
         this._currentState = state;
     }
-    LoadRenderer(htmlContainerId) {
+    loadRenderer(htmlContainerId) {
         if (this._currentState == null)
             throw new Error("the state of this instance of terraform is null");
         const rendererContainer = document.getElementById(htmlContainerId);
         if (!rendererContainer)
             throw new Error(`the html container with id ${htmlContainerId} is null`);
-        this._venusRenderer = SetupRenderer(rendererContainer);
+        this._venusRenderer = setupRenderer(rendererContainer);
         if (!this._venusRenderer)
             throw new Error(`the renderer couldn't be launched`);
         this.applyState();
         return this._venusRenderer;
     }
-    SetRenderer(venusRenderer) {
+    setRenderer(venusRenderer) {
         this._venusRenderer = venusRenderer;
     }
-    ApplyStateToRenderer() {
+    applyStateToRenderer() {
         if (this._currentState == null)
             throw new Error("the state of this instance of terraform is null");
         if (!this._venusRenderer)
@@ -39,7 +39,7 @@ export class Terraform {
         if (this._currentState.camera == null)
             throw new Error("camera is obbligatory, in the interface it was left as optional to let the developer add one later with the height and width of the html container");
         //CAMERA
-        this._venusRenderer.AddCamera(this._currentState.camera);
+        this._venusRenderer.addCamera(this._currentState.camera);
         //3D OBJS
         {
             const gltfLoader = new GLTFLoader();
@@ -57,16 +57,16 @@ export class Terraform {
         }
         //SOUNDS
         if (this._currentState.audios.length > 1) {
-            this._venusRenderer.AddAudioListener(new AudioListener());
+            this._venusRenderer.addAudioListener(new AudioListener());
             for (let i = 0; i < this._currentState.audios.length; i++) {
-                this._venusRenderer.AddAudio(this._currentState.audios[i]);
+                this._venusRenderer.addAudio(this._currentState.audios[i]);
             }
         }
         //ROVER
         if (this._currentState.roverConfig.rover != null) {
-            this._currentState.roverConfig.rover.forEach(r => this._venusRenderer.DeployRover(r));
+            this._currentState.roverConfig.rover.forEach((r) => this._venusRenderer.deployRover(r));
             if (this._currentState.roverConfig.activeController != null) {
-                this._venusRenderer.ActivateRoverController(this._currentState.roverConfig.activeController);
+                this._venusRenderer.activateRoverController(this._currentState.roverConfig.activeController);
             }
         }
     }
@@ -75,32 +75,32 @@ export class Terraform {
             gltfLoader.loadAsync(behaviourObject3D.loadPath).then((gltf) => {
                 behaviourObject3D.obj = gltf.scene;
                 behaviourObject3D.obj.animations = gltf.animations;
-                this._venusRenderer.AddObject3D(behaviourObject3D);
+                this._venusRenderer.addObject3D(behaviourObject3D);
                 //NOTE - we have load the child here because the load is async
                 if (behaviourObject3D.childrens != undefined) {
                     for (let j = 0; j < behaviourObject3D.childrens.length; j++) {
-                        this.loadChildren(behaviourObject3D, behaviourObject3D.childrens[j], gltfLoader);
+                        this.loadChildren(behaviourObject3D, behaviourObject3D.childrens[j]);
                     }
                 }
             });
         else {
-            this._venusRenderer.AddObject3D(behaviourObject3D);
+            this._venusRenderer.addObject3D(behaviourObject3D);
             if (behaviourObject3D.childrens != undefined) {
                 for (let j = 0; j < behaviourObject3D.childrens.length; j++) {
-                    this.loadChildren(behaviourObject3D, behaviourObject3D.childrens[j], gltfLoader);
+                    this.loadChildren(behaviourObject3D, behaviourObject3D.childrens[j]);
                 }
             }
         }
     }
-    loadChildren(currObj, child, gltfLoader) {
+    loadChildren(currObj, child) {
         currObj.obj?.children.forEach((t) => {
             if (t.name == child.name) {
                 child.behaviour.obj = t;
-                this._venusRenderer.AddObject3D(child.behaviour);
+                this._venusRenderer.addObject3D(child.behaviour);
             }
         });
     }
     loadLight(behaviourLight) {
-        this._venusRenderer.AddLights(behaviourLight);
+        this._venusRenderer.addLights(behaviourLight);
     }
 }

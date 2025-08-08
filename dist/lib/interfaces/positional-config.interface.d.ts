@@ -1,4 +1,4 @@
-export interface IPositionalConfig {
+export interface PositionalConfigInterface {
     refDistance: number;
     meshToAttachKey?: string;
 }

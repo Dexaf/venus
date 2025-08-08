@@ -1,4 +1,4 @@
-export const CreateRoverController = (name) => {
+export const createRoverController = (name) => {
     return {
         keys: {
             holded: {

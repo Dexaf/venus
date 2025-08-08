@@ -1,5 +1,5 @@
 import { DirectionalLight, Light, Vector2 } from 'three';
-import { IBehaviourObject } from '../../../../../../dist/lib/interfaces/behaviourObject.interface';
+import { BehaviourObjectInterface } from '../../../../../../dist/index';
 
 const lightKey = 'dir_light_0';
 
@@ -26,7 +26,7 @@ const getDirLight = () => {
   return dirLight;
 };
 
-export const dirLight: IBehaviourObject<Light, any> = {
+export const dirLight: BehaviourObjectInterface<Light> = {
   obj: getDirLight(),
   key: lightKey,
 };

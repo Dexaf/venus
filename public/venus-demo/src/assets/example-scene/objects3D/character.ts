@@ -1,8 +1,7 @@
 import { AnimationMixer, CatmullRomCurve3, Object3D, Vector3 } from 'three';
-import { VenusRenderer } from '../../../../../../dist/lib/renderer/venusRenderer';
-import { CalcSplinePointsDistance } from '../utils/calcSplinePointsDistance';
-import { IBehaviourObject } from '../../../../../../dist/lib/interfaces/behaviourObject.interface';
-import { Lerp } from '../utils/lerp';
+import { VenusRenderer, BehaviourObjectInterface } from '../../../../../../dist/index';
+import { CalcSplinePointsDistance } from '../utils/calc-spline-points-distance';
+import { lerp } from '../utils/lerp';
 
 const characterKey = 'character_0';
 
@@ -27,8 +26,8 @@ const characterProperties: ICharacterProperties = {
 };
 
 const onAdd = (venusRenderer: VenusRenderer) => {
-  const objRef = venusRenderer.GetObject3D(characterKey);
-  if (!objRef) throw new Error(`can't find ${characterKey} in OnAdd`);
+  const objRef = venusRenderer.getObject3D(characterKey);
+  if (!objRef) throw new Error(`can't find ${characterKey} in onAdd`);
 
   objRef.obj!.position.set(-10, 0, -40);
 
@@ -40,7 +39,7 @@ const onAdd = (venusRenderer: VenusRenderer) => {
   const action = objRef.animationMixer.clipAction(objRef.animations![0]);
   action.paused = true;
 
-  venusRenderer.SetSceneStateCallback(
+  venusRenderer.setSceneStateCallback(
     'scroll_progress',
     'character',
     'OnScrollProgressUpdate',
@@ -52,7 +51,7 @@ const onAdd = (venusRenderer: VenusRenderer) => {
 
 const beforeRender = (venusRenderer: VenusRenderer, delta: number) => {
   const thisObjRef =
-    venusRenderer.GetObject3D<ICharacterProperties>(characterKey);
+    venusRenderer.getObject3D(characterKey);
   if (
     !thisObjRef ||
     !thisObjRef.properties ||
@@ -76,9 +75,9 @@ const beforeRender = (venusRenderer: VenusRenderer, delta: number) => {
     action!.paused = true;
   } else {
     const curve =
-      venusRenderer.GetSceneStateVarValue<CatmullRomCurve3>('curve');
+      venusRenderer.getSceneStateVarValue<CatmullRomCurve3>('curve');
     const currPos = curve.getPointAt(thisObjRef.properties.currSec);
-    thisObjRef.properties.currSec = Lerp(
+    thisObjRef.properties.currSec = lerp(
       thisObjRef.properties.startSec,
       thisObjRef.properties.targSec,
       thisObjRef.properties.currTimeToTarget /
@@ -102,30 +101,30 @@ const beforeRender = (venusRenderer: VenusRenderer, delta: number) => {
 };
 
 //MAIN EXPORT
-export const character: IBehaviourObject<Object3D, ICharacterProperties> = {
+export const character: BehaviourObjectInterface<Object3D> = {
   loadPath: '/assets/gltf/character/character.gltf',
   properties: characterProperties,
   key: characterKey,
-  OnAdd: onAdd,
-  BeforeRender: beforeRender,
+  onAdd: onAdd,
+  beforeRender: beforeRender,
 };
 
 //SECTION - utils functions
 export const OnScrollProgressUpdate = (venusRenderer: VenusRenderer) => {
   const progress =
-    venusRenderer.GetSceneStateVarValue<string>('scroll_progress');
-  const catMullCurve = venusRenderer.GetSceneStateVarValue(
+    venusRenderer.getSceneStateVarValue<string>('scroll_progress');
+  const catMullCurve = venusRenderer.getSceneStateVarValue(
     'curve'
   ) as CatmullRomCurve3;
   const thisObjRef =
-    venusRenderer.GetObject3D<ICharacterProperties>(characterKey);
+    venusRenderer.getObject3D(characterKey);
 
   updateObjProperties(thisObjRef!, progress, catMullCurve);
   handleActionState(thisObjRef!);
 };
 
 const updateObjProperties = (
-  thisObjRef: IBehaviourObject<Object3D, ICharacterProperties>,
+  thisObjRef: BehaviourObjectInterface<Object3D>,
   progress: string,
   catMullCurve: CatmullRomCurve3
 ) => {
@@ -150,7 +149,7 @@ const updateObjProperties = (
 };
 
 const handleActionState = (
-  thisObjRef: IBehaviourObject<Object3D, ICharacterProperties>
+  thisObjRef: BehaviourObjectInterface<Object3D>
 ) => {
   const action = thisObjRef!.animationMixer!.clipAction(
     thisObjRef!.animations![0]

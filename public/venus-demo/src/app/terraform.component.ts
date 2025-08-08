@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Terraform } from '../../../../dist/lib/terraform/terraform';
-import { VenusRenderer } from '../../../../dist/lib/renderer/venusRenderer';
+import { VenusRenderer } from '../../../../dist/index';
 import { ExampleSceneState } from '../assets/example-scene/example-scene-state';
 import { CatmullRomCurve3, OrthographicCamera } from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { catmullRomCurve3Params } from '../assets/example-scene/objects3D/debugSpline';
+import { catmullRomCurve3Params } from '../assets/example-scene/objects3D/debug-spline';
 
 @Component({
   selector: 'terraform-component',
@@ -20,8 +20,8 @@ export class TerraformComponent implements OnInit {
 
   ngOnInit(): void {
     this.terraform = new Terraform();
-    this.terraform.LoadState(ExampleSceneState);
-    this.venusRenderer = this.terraform.LoadRenderer(
+    this.terraform.loadState(ExampleSceneState);
+    this.venusRenderer = this.terraform.loadRenderer(
       'terraform-rendered-container'
     );
     this.updateCameraFrustrum();
@@ -29,7 +29,7 @@ export class TerraformComponent implements OnInit {
     this.venusRenderer.camera!.lookAt(0, 0, 0);
 
     this.loadSceneState();
-    this.venusRenderer.StartRender();
+    this.venusRenderer.startRender();
     this.loadGsapHooks();
   }
 
@@ -48,8 +48,8 @@ export class TerraformComponent implements OnInit {
 
   loadSceneState() {
     if (this.venusRenderer) {
-      this.venusRenderer.SetSceneState('scroll_progress', 0, false);
-      this.venusRenderer.SetSceneState(
+      this.venusRenderer.setSceneState('scroll_progress', 0, false);
+      this.venusRenderer.setSceneState(
         'curve',
         new CatmullRomCurve3(catmullRomCurve3Params),
         false
@@ -69,7 +69,7 @@ export class TerraformComponent implements OnInit {
           end: 'bottom bottom',
           onUpdate: (self) => {
             if (this.venusRenderer)
-              this.venusRenderer.SetSceneState(
+              this.venusRenderer.setSceneState(
                 'scroll_progress',
                 self.progress.toFixed(2)
               );

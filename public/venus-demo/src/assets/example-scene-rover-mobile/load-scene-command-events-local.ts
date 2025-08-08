@@ -1,11 +1,11 @@
 import { Vector2, Vector3 } from 'three';
-import { VenusRenderer } from '../../../../../dist/lib/renderer/venusRenderer';
+import { VenusRenderer } from '../../../../../dist/index';
 import { defaultControllerName } from './example-scene-state';
 import { magnitude2D, pointerEventClientCToVector2 } from '../../../../../dist';
 
 export const loadSceneCommandEventsLocal = (venusRenderer: VenusRenderer) => {
-  const rover = venusRenderer.GetRoverByControllerName(defaultControllerName);
-  const cube = venusRenderer.GetObject3D('cube');
+  const rover = venusRenderer.getRoverByControllerName(defaultControllerName);
+  const cube = venusRenderer.getObject3D('cube');
 
   if (!cube) return;
 

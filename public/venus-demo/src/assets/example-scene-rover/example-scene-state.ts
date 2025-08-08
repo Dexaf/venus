@@ -1,17 +1,19 @@
-import { ITerraformState } from '../../../../../dist/lib/interfaces/terraformState.interface';
-import { Rover } from '../../../../../dist/lib/rover/rover';
-import { CreateRoverController } from '../../../../../dist/lib/rover/rover-controller';
+import {
+  TerraformStateInterface,
+  Rover,
+  createRoverController,
+} from '../../../../../dist/index';
 
 export const defaultControllerName = 'default';
 export const secondControllerName = 'second';
 
 const defaultRover = new Rover();
-defaultRover.controller = CreateRoverController(defaultControllerName);
+defaultRover.controller = createRoverController(defaultControllerName);
 
 const secondRover = new Rover();
-secondRover.controller = CreateRoverController(secondControllerName);
+secondRover.controller = createRoverController(secondControllerName);
 
-export const ExampleSceneState: ITerraformState = {
+export const ExampleSceneState: TerraformStateInterface = {
   objects: [],
   lights: [],
   audios: [],

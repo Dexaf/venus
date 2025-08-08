@@ -5,10 +5,12 @@ import {
   Object3DEventMap,
   Vector3,
 } from 'three';
-import { VenusRenderer } from '../../../../../../dist/lib/renderer/venusRenderer';
-import { IBehaviourObject } from '../../../../../../dist/lib/interfaces/behaviourObject.interface';
-import { CalcSplinePointsDistance } from '../utils/calcSplinePointsDistance';
-import { Lerp } from '../utils/lerp';
+import {
+  VenusRenderer,
+  BehaviourObjectInterface,
+} from '../../../../../../dist/index';
+import { CalcSplinePointsDistance } from '../utils/calc-spline-points-distance';
+import { lerp } from '../utils/lerp';
 
 export interface ICharacterProperties {
   speed: number;
@@ -22,9 +24,7 @@ export interface ICharacterProperties {
 
 const characterKey = 'character_0';
 
-export class character
-  implements IBehaviourObject<Object3D, ICharacterProperties>
-{
+export class Character implements BehaviourObjectInterface<Object3D> {
   //IT'S GOING TO BE DEFINED BY TERRAFORM
   obj!: Object3D<Object3DEventMap>;
   loadPath = '/assets/gltf/character/character.gltf';
@@ -40,7 +40,7 @@ export class character
   };
   animationMixer: AnimationMixer | undefined;
 
-  OnAdd(venusRenderer: VenusRenderer): void {
+  onAdd(venusRenderer: VenusRenderer): void {
     this.obj.position.set(-10, 0, -40);
 
     this.obj.traverse((child) => {
@@ -51,7 +51,7 @@ export class character
     const action = this.animationMixer.clipAction(this.obj.animations![0]);
     action.paused = true;
 
-    venusRenderer.SetSceneStateCallback(
+    venusRenderer.setSceneStateCallback(
       'scroll_progress',
       'character',
       'OnScrollProgressUpdate',
@@ -61,7 +61,7 @@ export class character
     );
   }
 
-  BeforeRender?(venusRenderer: VenusRenderer, delta: number): void {
+  beforeRender?(venusRenderer: VenusRenderer, delta: number): void {
     if (this.properties.shouldMove == false) return;
 
     this.properties.currTimeToTarget += delta;
@@ -76,9 +76,9 @@ export class character
       action!.paused = true;
     } else {
       const curve =
-        venusRenderer.GetSceneStateVarValue<CatmullRomCurve3>('curve');
+        venusRenderer.getSceneStateVarValue<CatmullRomCurve3>('curve');
       const currPos = curve.getPointAt(this.properties.currSec);
-      this.properties.currSec = Lerp(
+      this.properties.currSec = lerp(
         this.properties.startSec,
         this.properties.targSec,
         this.properties.currTimeToTarget / this.properties.timeToTarget
@@ -105,8 +105,8 @@ export class character
   //SECTION - utils functions
   onScrollProgressUpdate = (venusRenderer: VenusRenderer) => {
     const progress =
-      venusRenderer.GetSceneStateVarValue<string>('scroll_progress');
-    const catMullCurve = venusRenderer.GetSceneStateVarValue(
+      venusRenderer.getSceneStateVarValue<string>('scroll_progress');
+    const catMullCurve = venusRenderer.getSceneStateVarValue(
       'curve'
     ) as CatmullRomCurve3;
 
