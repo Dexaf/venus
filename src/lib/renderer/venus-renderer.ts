@@ -186,7 +186,7 @@ export class VenusRenderer {
 
 	callStateVarCallbacks(key: string) {
 		const observersCallbacks = this.sceneStateOberservers.get(key);
-		if (observersCallbacks == null) throw new Error(`can't call callbacks for state var ${key} as it's not found`);
+		if (observersCallbacks == null) return;
 
 		observersCallbacks.forEach((ocs) => {
 			ocs.forEach((oc) => {
@@ -279,10 +279,10 @@ export class VenusRenderer {
 	public getByTag(tag: string): BehaviourObjectInterface<THREE.Light | THREE.Object3D>[] {
 		const result: BehaviourObjectInterface<THREE.Light | THREE.Object3D>[] = [];
 		this.objects3D.forEach((obj) => {
-			if (obj.tag === tag) result.push(obj);
+			if (obj.tag === tag && obj) result.push(obj);
 		});
 		this.lights.forEach((light) => {
-			if (light.tag === tag) result.push(light);
+			if (light.tag === tag && light) result.push(light);
 		});
 		return result;
 	}
