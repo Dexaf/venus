@@ -33,11 +33,11 @@ export interface TouchInterface {
 export interface TouchInputDataInterface {
     event: PointerEvent | null;
 }
-export declare const PointerButtons: {
-    LeftTouch: number;
-    RightTouch: number;
-    MiddleTouch: number;
-};
+export declare enum POINTER_BUTTONS {
+    LEFT_TOUCH = 1,
+    RIGHT_TOUCH = 2,
+    MIDDLE_TOUCH = 4
+}
 export interface WheelInputReactionInterface {
     event: WheelEvent | null;
     reactions: Map<ReactionKey, Reaction>;

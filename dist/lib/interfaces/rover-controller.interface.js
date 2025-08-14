@@ -1,5 +1,6 @@
-export const PointerButtons = {
-    LeftTouch: 1,
-    RightTouch: 2,
-    MiddleTouch: 4,
-};
+export var POINTER_BUTTONS;
+(function (POINTER_BUTTONS) {
+    POINTER_BUTTONS[POINTER_BUTTONS["LEFT_TOUCH"] = 1] = "LEFT_TOUCH";
+    POINTER_BUTTONS[POINTER_BUTTONS["RIGHT_TOUCH"] = 2] = "RIGHT_TOUCH";
+    POINTER_BUTTONS[POINTER_BUTTONS["MIDDLE_TOUCH"] = 4] = "MIDDLE_TOUCH";
+})(POINTER_BUTTONS || (POINTER_BUTTONS = {}));
