@@ -1,5 +1,5 @@
 import {
-  PointerButtons,
+  POINTER_BUTTONS,
   Reaction,
   RoverControllerInterface,
 } from '../../../../../dist/lib/interfaces/rover-controller.interface';
@@ -76,13 +76,13 @@ const releaseReaction: Reaction = (rover: Rover) => {
 
 const touchDownReaction: Reaction = (e: PointerEvent) => {
   switch (e!.buttons) {
-    case PointerButtons.LeftTouch:
+    case POINTER_BUTTONS.LEFT_TOUCH:
       document.getElementById('MouseLeft')?.classList.add('active');
       break;
-    case PointerButtons.RightTouch:
+    case POINTER_BUTTONS.RIGHT_TOUCH:
       document.getElementById('MouseRight')?.classList.add('active');
       break;
-    case PointerButtons.MiddleTouch:
+    case POINTER_BUTTONS.MIDDLE_TOUCH:
       document.getElementById('MouseWheel-U')?.classList.add('active');
       document.getElementById('MouseWheel-L')?.classList.add('active');
       break;
