@@ -5,6 +5,15 @@ export declare class Rover {
      * if false it stops the controller events from doing anything, updating or firing reactions
      */
     isActive: boolean;
+    private _keypressHandler?;
+    private _keydownHandler?;
+    private _keyupHandler?;
+    private _pointerdownHandler?;
+    private _pointermoveHandler?;
+    private _pointerupHandler?;
+    private _pointercancelHandler?;
+    private _wheelHandler?;
+    private _touchmoveHandler?;
     /**
      * @param canvas the canvas of the working render
      * @description resets the inputs and activate the event listeners to trigger the events of the controller.

@@ -8,6 +8,17 @@ export class Rover {
 	 */
 	public isActive = false;
 
+	//SECTION - references to events used for init and stop
+	private _keypressHandler?: (e: KeyboardEvent) => void;
+	private _keydownHandler?: (e: KeyboardEvent) => void;
+	private _keyupHandler?: (e: KeyboardEvent) => void;
+	private _pointerdownHandler?: (e: PointerEvent) => void;
+	private _pointermoveHandler?: (e: PointerEvent) => void;
+	private _pointerupHandler?: (e: PointerEvent) => void;
+	private _pointercancelHandler?: (e: PointerEvent) => void;
+	private _wheelHandler?: (e: WheelEvent) => void;
+	private _touchmoveHandler?: (e: TouchEvent) => void;
+
 	/**
 	 * @param canvas the canvas of the working render
 	 * @description resets the inputs and activate the event listeners to trigger the events of the controller.
@@ -21,23 +32,30 @@ export class Rover {
 
 		this.resetControllerInputs();
 
+		this._keypressHandler = (e: KeyboardEvent) => this.keypress(e);
+		this._keydownHandler = (e: KeyboardEvent) => this.keydown(e);
+		this._keyupHandler = (e: KeyboardEvent) => this.keyup(e);
+		this._pointerdownHandler = (e: PointerEvent) => this.pointerdown(e);
+		this._pointermoveHandler = (e: PointerEvent) => this.pointermove(e);
+		this._pointerupHandler = (e: PointerEvent) => this.pointerup(e);
+		this._pointercancelHandler = (e: PointerEvent) => this.pointercancel(e);
+		this._wheelHandler = (e: WheelEvent) => this.wheeluse(e);
+		this._touchmoveHandler = (e: TouchEvent) => e.preventDefault();
+
 		// SINGLE INPUT
-		document.addEventListener("keypress", this.keypress.bind(this));
-		canvas.addEventListener("pointerdown", this.pointerdown.bind(this));
-		canvas.addEventListener("pointermove", this.pointermove.bind(this));
-		document.addEventListener("wheel", this.wheeluse.bind(this));
+		document.addEventListener("keypress", this._keypressHandler);
+		canvas.addEventListener("pointerdown", this._pointerdownHandler);
+		canvas.addEventListener("pointermove", this._pointermoveHandler);
+		document.addEventListener("wheel", this._wheelHandler);
 
 		// PARALLEL INPUT
-		document.addEventListener("keydown", this.keydown.bind(this));
+		document.addEventListener("keydown", this._keydownHandler);
 
 		// RESETS
-		document.addEventListener("keyup", this.keyup.bind(this));
-		canvas.addEventListener("pointerup", this.pointerup.bind(this));
-		document.addEventListener("pointercancel", this.pointercancel.bind(this));
-		//NOTE blocca lo scroll della pagina
-		canvas.addEventListener("touchmove", (e) => {
-			e.preventDefault();
-		});
+		document.addEventListener("keyup", this._keyupHandler);
+		canvas.addEventListener("pointerup", this._pointerupHandler);
+		document.addEventListener("pointercancel", this._pointercancelHandler);
+		canvas.addEventListener("touchmove", this._touchmoveHandler, { passive: false });
 
 		this.isActive = true;
 	}
@@ -73,21 +91,23 @@ export class Rover {
 			return;
 		}
 
+		if (this.isActive == false) return;
+
 		this.isActive = false;
 
 		// SINGLE INPUT
-		document.removeEventListener("keypress", this.keypress.bind(this));
-		canvas.removeEventListener("pointerdown", this.pointerdown.bind(this));
-		canvas.removeEventListener("pointermove", this.pointermove.bind(this));
-		document.removeEventListener("wheel", this.wheeluse.bind(this));
+		document.removeEventListener("keypress", this._keypressHandler!);
+		canvas.removeEventListener("pointerdown", this._pointerdownHandler!);
+		canvas.removeEventListener("pointermove", this._pointermoveHandler!);
+		document.removeEventListener("wheel", this._wheelHandler!);
 
 		// PARALLEL INPUT
-		document.removeEventListener("keydown", this.keydown.bind(this));
+		document.removeEventListener("keydown", this._keydownHandler!);
 
 		// RESETS
-		document.removeEventListener("keyup", this.keyup.bind(this));
-		canvas.removeEventListener("pointerup", this.pointerup.bind(this));
-		document.addEventListener("pointercancel", this.pointercancel.bind(this));
+		document.removeEventListener("keyup", this._keyupHandler!);
+		canvas.removeEventListener("pointerup", this._pointerupHandler!);
+		document.addEventListener("pointercancel", this._pointercancelHandler!);
 	}
 
 	//SECTION - EVENTS FOR THE ROVER
