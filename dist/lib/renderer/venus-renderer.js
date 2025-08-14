@@ -160,7 +160,7 @@ export class VenusRenderer {
     callStateVarCallbacks(key) {
         const observersCallbacks = this.sceneStateOberservers.get(key);
         if (observersCallbacks == null)
-            throw new Error(`can't call callbacks for state var ${key} as it's not found`);
+            return;
         observersCallbacks.forEach((ocs) => {
             ocs.forEach((oc) => {
                 oc.call(this);
@@ -246,11 +246,11 @@ export class VenusRenderer {
     getByTag(tag) {
         const result = [];
         this.objects3D.forEach((obj) => {
-            if (obj.tag === tag)
+            if (obj.tag === tag && obj)
                 result.push(obj);
         });
         this.lights.forEach((light) => {
-            if (light.tag === tag)
+            if (light.tag === tag && light)
                 result.push(light);
         });
         return result;
