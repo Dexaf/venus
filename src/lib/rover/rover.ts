@@ -40,7 +40,6 @@ export class Rover {
 		this._pointerupHandler = (e: PointerEvent) => this.pointerup(e);
 		this._pointercancelHandler = (e: PointerEvent) => this.pointercancel(e);
 		this._wheelHandler = (e: WheelEvent) => this.wheeluse(e);
-		this._touchmoveHandler = (e: TouchEvent) => e.preventDefault();
 
 		// SINGLE INPUT
 		document.addEventListener("keypress", this._keypressHandler);
@@ -55,7 +54,6 @@ export class Rover {
 		document.addEventListener("keyup", this._keyupHandler);
 		canvas.addEventListener("pointerup", this._pointerupHandler);
 		document.addEventListener("pointercancel", this._pointercancelHandler);
-		canvas.addEventListener("touchmove", this._touchmoveHandler, { passive: false });
 
 		this.isActive = true;
 	}
@@ -143,39 +141,28 @@ export class Rover {
 			//NOTE - maybe we should reset the input for released
 		}
 	};
+
 	//POINTER INPUT
 	private pointerdown = (e: PointerEvent) => {
-		e.preventDefault();
-		//NOTE blocca lo scroll della pagina
-		if (e) (e.target as HTMLElement).setPointerCapture(e.pointerId);
 		if (this.isActive) this.updatePointerReaction(e, this.controller.touch.down);
 	};
-
 	private pointermove = (e: PointerEvent) => {
-		e.preventDefault();
-
-		if (this.isActive) {
-			this.updatePointerReaction(e, this.controller.touch.moving, true, e.pointerId);
-		}
+		if (this.isActive) this.updatePointerReaction(e, this.controller.touch.moving, true, e.pointerId);
 	};
-
 	private pointerup = (e: PointerEvent) => {
-		e.preventDefault();
 		if (this.isActive) {
 			this.updatePointerReaction(null, this.controller.touch.down, false, e.pointerId);
 			this.updatePointerReaction(null, this.controller.touch.moving, true, e.pointerId);
 			this.updatePointerReaction(e, this.controller.touch.up);
 		}
 	};
-
 	private pointercancel = (e: PointerEvent) => {
-		e.preventDefault();
 		if (this.isActive) {
 			this.updatePointerReaction(null, this.controller.touch.down, false, e.pointerId);
 			this.updatePointerReaction(null, this.controller.touch.moving, true, e.pointerId);
 		}
 	};
-	//!SECTION - EVENTS FOR THE ROVER
+
 	//WHEEL INPUT
 	private wheeluse = (e: WheelEvent) => {
 		if (this.isActive) {
@@ -198,6 +185,7 @@ export class Rover {
 			}, 30);
 		}
 	};
+	//!SECTION - EVENTS FOR THE ROVER
 
 	//SECTION - UTILS
 	/**

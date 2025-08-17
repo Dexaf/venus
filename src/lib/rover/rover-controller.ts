@@ -1,4 +1,4 @@
-import { RoverControllerInterface, TouchInputDataInterface } from "../interfaces/rover-controller.interface";
+import { RoverControllerInterface } from "../interfaces/rover-controller.interface";
 
 export const createRoverController = (name: string): RoverControllerInterface => {
 	return {
