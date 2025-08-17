@@ -32,6 +32,9 @@ export class RoverMobileComponent implements OnInit {
     this.venusRenderer.startRender();
 
     loadSceneCommandEventsLocal(this.venusRenderer);
+    this.venusRenderer
+      .getCanvas()
+      .addEventListener('touchmove', (e) => e.preventDefault());
   }
 
   private setCamera(containerDiv: HTMLElement) {
