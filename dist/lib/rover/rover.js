@@ -39,21 +39,14 @@ export class Rover {
         };
         //POINTER INPUT
         this.pointerdown = (e) => {
-            e.preventDefault();
-            //NOTE blocca lo scroll della pagina
-            if (e)
-                e.target.setPointerCapture(e.pointerId);
             if (this.isActive)
                 this.updatePointerReaction(e, this.controller.touch.down);
         };
         this.pointermove = (e) => {
-            e.preventDefault();
-            if (this.isActive) {
+            if (this.isActive)
                 this.updatePointerReaction(e, this.controller.touch.moving, true, e.pointerId);
-            }
         };
         this.pointerup = (e) => {
-            e.preventDefault();
             if (this.isActive) {
                 this.updatePointerReaction(null, this.controller.touch.down, false, e.pointerId);
                 this.updatePointerReaction(null, this.controller.touch.moving, true, e.pointerId);
@@ -61,13 +54,11 @@ export class Rover {
             }
         };
         this.pointercancel = (e) => {
-            e.preventDefault();
             if (this.isActive) {
                 this.updatePointerReaction(null, this.controller.touch.down, false, e.pointerId);
                 this.updatePointerReaction(null, this.controller.touch.moving, true, e.pointerId);
             }
         };
-        //!SECTION - EVENTS FOR THE ROVER
         //WHEEL INPUT
         this.wheeluse = (e) => {
             if (this.isActive) {
@@ -124,7 +115,6 @@ export class Rover {
         this._pointerupHandler = (e) => this.pointerup(e);
         this._pointercancelHandler = (e) => this.pointercancel(e);
         this._wheelHandler = (e) => this.wheeluse(e);
-        this._touchmoveHandler = (e) => e.preventDefault();
         // SINGLE INPUT
         document.addEventListener("keypress", this._keypressHandler);
         canvas.addEventListener("pointerdown", this._pointerdownHandler);
@@ -136,7 +126,6 @@ export class Rover {
         document.addEventListener("keyup", this._keyupHandler);
         canvas.addEventListener("pointerup", this._pointerupHandler);
         document.addEventListener("pointercancel", this._pointercancelHandler);
-        canvas.addEventListener("touchmove", this._touchmoveHandler, { passive: false });
         this.isActive = true;
     }
     /**
@@ -182,6 +171,7 @@ export class Rover {
         canvas.removeEventListener("pointerup", this._pointerupHandler);
         document.addEventListener("pointercancel", this._pointercancelHandler);
     }
+    //!SECTION - EVENTS FOR THE ROVER
     //SECTION - UTILS
     /**
      * @param event: current PointerEvent or null to use for the update
