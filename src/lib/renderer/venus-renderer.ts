@@ -3,6 +3,7 @@ import { BehaviourObjectInterface } from "../interfaces/behaviour-object.interfa
 import { AudioConfigInterface } from "../interfaces/audio-config.interface";
 import { Rover } from "../rover/rover";
 import { BehaviourProcessInterface } from "../interfaces/behaviour-process.interface";
+import { CSS2DObject, CSS2DRenderer } from "three/examples/jsm/Addons";
 
 export class VenusRenderer {
 	// Three.js WebGL renderer instance
@@ -25,6 +26,10 @@ export class VenusRenderer {
 	//the key is the name of the var in the scene state
 	//the value is an object that handles the callbacks of an object for that var
 	private sceneStateOberservers: StateVarObservers = new Map();
+
+	// Html slices
+	htmlSlices: Map<string, CSS2DObject> = new Map<string, CSS2DObject>();
+	css2DRender: CSS2DRenderer = new CSS2DRenderer();
 
 	// Audio components
 	private audioListener: THREE.AudioListener | null = null;
@@ -53,6 +58,10 @@ export class VenusRenderer {
 	constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene) {
 		this.renderer = renderer;
 		this.scene = scene;
+		this.css2DRender.setSize(renderer.domElement.width, renderer.domElement.height);
+		this.css2DRender.domElement.style.position = "absolute";
+		this.css2DRender.domElement.style.top = "0px";
+		renderer.domElement.parentElement!.appendChild(this.css2DRender.domElement);
 	}
 
 	//===============================
@@ -194,6 +203,32 @@ export class VenusRenderer {
 			});
 		});
 	}
+
+	//===============================
+	// SECTION: Html slices
+	//===============================
+	public addHtmlSlice = (key: string, css2DObj: CSS2DObject) => {
+		if (this.htmlSlices.get(key)) throw new Error(`key already used for html slice ${key}`);
+		this.htmlSlices.set(key, css2DObj);
+		this.scene!.add(css2DObj);
+	};
+
+	public getHtmlSlice = (key: string) => {
+		const css2DObj = this.htmlSlices.get(key);
+		if (!css2DObj) throw new Error(`can't find html slice with key ${key}`);
+		return css2DObj;
+	};
+
+	public removeHtmlSlice = (key: string) => {
+		const css2DObj = this.htmlSlices.get(key);
+		if (!css2DObj) throw new Error(`no html slice with name ${key}`);
+		this.htmlSlices.delete(key);
+		this.scene!.remove(css2DObj);
+	};
+	//===============================
+	// !SECTION: Html slices
+	//===============================
+
 	//===============================
 	// SECTION: Audio
 	//===============================
@@ -523,13 +558,17 @@ export class VenusRenderer {
 	/** Internal animation callback for each frame */
 	private animate() {
 		const delta = this.clock!.getDelta();
-		this.objects3D.forEach((o3D) => {
-			o3D.animationMixer?.update(delta);
+		this.objects3D.forEach((obj3D) => {
+			obj3D.animationMixer?.update(delta);
 		});
 		this.timeFromStart += delta;
 		this._lastDelta = delta;
 		this.runBehavioursBefore(delta);
+
+		this.css2DRender.render(this.scene!, this.camera!);
+
 		this.renderer.render(this.scene!, this.camera!);
+
 		this.runBehavioursAfter(delta);
 	}
 
