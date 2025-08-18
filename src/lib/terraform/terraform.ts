@@ -47,6 +47,9 @@ export class Terraform {
 		//CAMERA
 		this._venusRenderer!.addCamera(this._currentState!.camera);
 
+		//STATE LOADER
+		if (this._currentState!.stateLoad) this._currentState?.stateLoad(this._venusRenderer);
+
 		//3D OBJS
 		{
 			const gltfLoader = new GLTFLoader();
@@ -62,7 +65,7 @@ export class Terraform {
 			this.loadLight(this._currentState!.lights[i]);
 		}
 
-    //PROCESS
+		//PROCESS
 		for (let i = 0; i < this._currentState!.processes.length; i++) {
 			const prcs = this._currentState!.processes[i];
 			this._venusRenderer!.addProcess(prcs);
