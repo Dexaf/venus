@@ -3,6 +3,7 @@ import { BehaviourObjectInterface } from "../interfaces/behaviour-object.interfa
 import { AudioConfigInterface } from "../interfaces/audio-config.interface";
 import { Rover } from "../rover/rover";
 import { BehaviourProcessInterface } from "../interfaces/behaviour-process.interface";
+import { CSS2DObject, CSS2DRenderer } from "three/examples/jsm/Addons";
 export declare class VenusRenderer {
     renderer: THREE.WebGLRenderer;
     private scene;
@@ -11,6 +12,8 @@ export declare class VenusRenderer {
     private activeRoverName;
     private sceneState;
     private sceneStateOberservers;
+    htmlSlices: Map<string, CSS2DObject>;
+    css2DRender: CSS2DRenderer;
     private audioListener;
     private audioLoader;
     private audios;
@@ -53,6 +56,9 @@ export declare class VenusRenderer {
      */
     removeSceneStateCallback(stateVarKey?: string | null, observerKey?: string | null, callbackKey?: string | null): void;
     callStateVarCallbacks(key: string): void;
+    addHtmlSlice: (key: string, css2DObj: CSS2DObject) => void;
+    getHtmlSlice: (key: string) => CSS2DObject;
+    removeHtmlSlice: (key: string) => void;
     /** Attaches an audio listener to the camera (camera must be set first) */
     addAudioListener(audioListener: THREE.AudioListener): void;
     /**

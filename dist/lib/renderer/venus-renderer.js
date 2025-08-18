@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { CSS2DRenderer } from "three/examples/jsm/Addons";
 export class VenusRenderer {
     get lastDelta() {
         return this._lastDelta;
@@ -17,6 +18,9 @@ export class VenusRenderer {
         //the key is the name of the var in the scene state
         //the value is an object that handles the callbacks of an object for that var
         this.sceneStateOberservers = new Map();
+        // Html slices
+        this.htmlSlices = new Map();
+        this.css2DRender = new CSS2DRenderer();
         // Audio components
         this.audioListener = null;
         this.audioLoader = null;
@@ -60,8 +64,34 @@ export class VenusRenderer {
                 ...this.camera,
             };
         };
+        //===============================
+        // SECTION: Html slices
+        //===============================
+        this.addHtmlSlice = (key, css2DObj) => {
+            if (this.htmlSlices.get(key))
+                throw new Error(`key already used for html slice ${key}`);
+            this.htmlSlices.set(key, css2DObj);
+            this.scene.add(css2DObj);
+        };
+        this.getHtmlSlice = (key) => {
+            const css2DObj = this.htmlSlices.get(key);
+            if (!css2DObj)
+                throw new Error(`can't find html slice with key ${key}`);
+            return css2DObj;
+        };
+        this.removeHtmlSlice = (key) => {
+            const css2DObj = this.htmlSlices.get(key);
+            if (!css2DObj)
+                throw new Error(`no html slice with name ${key}`);
+            this.htmlSlices.delete(key);
+            this.scene.remove(css2DObj);
+        };
         this.renderer = renderer;
         this.scene = scene;
+        this.css2DRender.setSize(renderer.domElement.width, renderer.domElement.height);
+        this.css2DRender.domElement.style.position = "absolute";
+        this.css2DRender.domElement.style.top = "0px";
+        renderer.domElement.parentElement.appendChild(this.css2DRender.domElement);
     }
     //===============================
     // SECTION: Scene state
@@ -167,6 +197,9 @@ export class VenusRenderer {
             });
         });
     }
+    //===============================
+    // !SECTION: Html slices
+    //===============================
     //===============================
     // SECTION: Audio
     //===============================
@@ -468,12 +501,13 @@ export class VenusRenderer {
     /** Internal animation callback for each frame */
     animate() {
         const delta = this.clock.getDelta();
-        this.objects3D.forEach((o3D) => {
-            o3D.animationMixer?.update(delta);
+        this.objects3D.forEach((obj3D) => {
+            obj3D.animationMixer?.update(delta);
         });
         this.timeFromStart += delta;
         this._lastDelta = delta;
         this.runBehavioursBefore(delta);
+        this.css2DRender.render(this.scene, this.camera);
         this.renderer.render(this.scene, this.camera);
         this.runBehavioursAfter(delta);
     }
