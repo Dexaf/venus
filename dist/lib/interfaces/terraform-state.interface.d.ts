@@ -6,6 +6,7 @@ import { Rover } from "../rover/rover";
 import { BehaviourProcessInterface } from "./behaviour-process.interface";
 export interface TerraformStateInterface {
     camera?: THREE.Camera;
+    stateLoad?: Function;
     objects: BehaviourObjectInterface<Object3D>[];
     lights: BehaviourObjectInterface<Light>[];
     processes: BehaviourProcessInterface[];

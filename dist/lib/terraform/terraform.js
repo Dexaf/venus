@@ -40,6 +40,9 @@ export class Terraform {
             throw new Error("camera is obbligatory, in the interface it was left as optional to let the developer add one later with the height and width of the html container");
         //CAMERA
         this._venusRenderer.addCamera(this._currentState.camera);
+        //STATE LOADER
+        if (this._currentState.stateLoad)
+            this._currentState?.stateLoad(this._venusRenderer);
         //3D OBJS
         {
             const gltfLoader = new GLTFLoader();
