@@ -3,6 +3,7 @@ import { setupRenderer } from '../../../../dist/index';
 import { VenusRenderer } from '../../../../dist/index';
 import * as THREE from 'three';
 import { BehaviourObjectInterface } from '../../../../dist/index';
+import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 
 @Component({
   selector: 'venus-component',
@@ -54,18 +55,6 @@ export class VenusComponent implements OnInit {
       plane.obj!.position.y = -0.5;
       this.renderer.addObject3D(plane);
 
-      const cubeSize = 1;
-      const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-      const cubeMat = new THREE.MeshPhongMaterial({ color: '#8AC' });
-      const cube: BehaviourObjectInterface<THREE.Object3D> = {
-        key: 'cube_0',
-        obj: new THREE.Mesh(cubeGeo, cubeMat),
-        beforeRender: (_) => {
-          cube.obj!.position.x = Math.sin(this.renderer!.getTimeFromStart());
-        },
-      };
-      this.renderer.addObject3D(cube);
-
       const color = 0x00fff0;
       const intensity = 2;
       const light = {
@@ -79,6 +68,29 @@ export class VenusComponent implements OnInit {
         path: 'assets/sample.ogg',
         positionalConfig: { refDistance: 200, meshToAttachKey: 'cube_0' },
       });
+
+      const cubeSize = 1;
+      const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+      const cubeMat = new THREE.MeshPhongMaterial({ color: '#8AC' });
+      const cube: BehaviourObjectInterface<THREE.Object3D> = {
+        key: 'cube_0',
+        obj: new THREE.Mesh(cubeGeo, cubeMat),
+        beforeRender: (_) => {
+          cube.obj!.position.x = Math.sin(this.renderer!.getTimeFromStart());
+          css2DObj.element.innerHTML = `
+            <p style='color:red'>cube position is ${cube.obj?.position.x.toFixed(2)},  ${cube.obj?.position.y},  ${cube.obj?.position.z}</p>
+          `;
+        },
+      };
+      this.renderer.addObject3D(cube);
+
+      const div = document.createElement('div');
+      div.innerHTML = `
+        <p style='color:red'>cube position is ${cube.obj?.position.x},  ${cube.obj?.position.y},  ${cube.obj?.position.z}</p>
+      `;
+      const css2DObj = new CSS2DObject(div);
+      this.renderer.addHtmlSlice('cubePositionLabel', css2DObj);
+      css2DObj.position.set(0, 4, 0);
     }
   }
 }

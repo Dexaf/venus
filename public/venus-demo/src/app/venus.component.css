@@ -21,6 +21,7 @@
 #venus-rendered-container {
   height: 90%;
   width: 70%;
+  position: relative;
 }
 
 #venus-rendered-container:first-child {
