@@ -595,6 +595,7 @@ export class VenusRenderer {
 		this.runBehavioursBefore(delta);
 
 		this.css2DRender.render(this.scene!, this.camera!);
+		this.css3DRender.render(this.scene!, this.camera!);
 
 		this.renderer.render(this.scene!, this.camera!);
 
