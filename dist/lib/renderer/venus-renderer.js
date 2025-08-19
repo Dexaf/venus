@@ -535,6 +535,7 @@ export class VenusRenderer {
         this._lastDelta = delta;
         this.runBehavioursBefore(delta);
         this.css2DRender.render(this.scene, this.camera);
+        this.css3DRender.render(this.scene, this.camera);
         this.renderer.render(this.scene, this.camera);
         this.runBehavioursAfter(delta);
     }
