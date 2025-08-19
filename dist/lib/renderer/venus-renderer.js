@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { CSS2DRenderer } from "three/examples/jsm/Addons";
+import { CSS2DRenderer, CSS3DRenderer } from "three/examples/jsm/Addons";
 export class VenusRenderer {
     get lastDelta() {
         return this._lastDelta;
@@ -19,8 +19,10 @@ export class VenusRenderer {
         //the value is an object that handles the callbacks of an object for that var
         this.sceneStateOberservers = new Map();
         // Html slices
-        this.htmlSlices = new Map();
+        this.htmlSlices2D = new Map();
         this.css2DRender = new CSS2DRenderer();
+        this.htmlSlices3D = new Map();
+        this.css3DRender = new CSS3DRenderer();
         // Audio components
         this.audioListener = null;
         this.audioLoader = null;
@@ -67,31 +69,56 @@ export class VenusRenderer {
         //===============================
         // SECTION: Html slices
         //===============================
-        this.addHtmlSlice = (key, css2DObj) => {
-            if (this.htmlSlices.get(key))
+        this.addHtmlSlice2D = (key, css2DObj) => {
+            if (this.htmlSlices2D.get(key))
                 throw new Error(`key already used for html slice ${key}`);
-            this.htmlSlices.set(key, css2DObj);
+            this.htmlSlices2D.set(key, css2DObj);
             this.scene.add(css2DObj);
         };
-        this.getHtmlSlice = (key) => {
-            const css2DObj = this.htmlSlices.get(key);
+        this.getHtmlSlice2D = (key) => {
+            const css2DObj = this.htmlSlices2D.get(key);
             if (!css2DObj)
                 throw new Error(`can't find html slice with key ${key}`);
             return css2DObj;
         };
-        this.removeHtmlSlice = (key) => {
-            const css2DObj = this.htmlSlices.get(key);
+        this.removeHtmlSlice2D = (key) => {
+            const css2DObj = this.htmlSlices2D.get(key);
             if (!css2DObj)
                 throw new Error(`no html slice with name ${key}`);
-            this.htmlSlices.delete(key);
+            this.htmlSlices2D.delete(key);
             this.scene.remove(css2DObj);
+        };
+        this.addHtmlSlice3D = (key, css3DObj) => {
+            if (this.htmlSlices3D.get(key))
+                throw new Error(`key already used for html slice ${key}`);
+            this.htmlSlices3D.set(key, css3DObj);
+            this.scene.add(css3DObj);
+        };
+        this.getHtmlSlice3D = (key) => {
+            const css3DObj = this.htmlSlices3D.get(key);
+            if (!css3DObj)
+                throw new Error(`can't find html slice with key ${key}`);
+            return css3DObj;
+        };
+        this.removeHtmlSlice3D = (key) => {
+            const css3DObj = this.htmlSlices3D.get(key);
+            if (!css3DObj)
+                throw new Error(`no html slice with name ${key}`);
+            this.htmlSlices3D.delete(key);
+            this.scene.remove(css3DObj);
         };
         this.renderer = renderer;
         this.scene = scene;
         this.css2DRender.setSize(renderer.domElement.width, renderer.domElement.height);
         this.css2DRender.domElement.style.position = "absolute";
+        this.css2DRender.domElement.style.pointerEvents = "none";
         this.css2DRender.domElement.style.top = "0px";
         renderer.domElement.parentElement.appendChild(this.css2DRender.domElement);
+        this.css3DRender.setSize(renderer.domElement.width, renderer.domElement.height);
+        this.css3DRender.domElement.style.position = "absolute";
+        this.css3DRender.domElement.style.pointerEvents = "none";
+        this.css3DRender.domElement.style.top = "0px";
+        renderer.domElement.parentElement.appendChild(this.css3DRender.domElement);
     }
     //===============================
     // SECTION: Scene state
