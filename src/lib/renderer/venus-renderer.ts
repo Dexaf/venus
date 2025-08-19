@@ -3,7 +3,7 @@ import { BehaviourObjectInterface } from "../interfaces/behaviour-object.interfa
 import { AudioConfigInterface } from "../interfaces/audio-config.interface";
 import { Rover } from "../rover/rover";
 import { BehaviourProcessInterface } from "../interfaces/behaviour-process.interface";
-import { CSS2DObject, CSS2DRenderer } from "three/examples/jsm/Addons";
+import { CSS2DObject, CSS2DRenderer, CSS3DObject, CSS3DRenderer } from "three/examples/jsm/Addons";
 
 export class VenusRenderer {
 	// Three.js WebGL renderer instance
@@ -28,8 +28,10 @@ export class VenusRenderer {
 	private sceneStateOberservers: StateVarObservers = new Map();
 
 	// Html slices
-	htmlSlices: Map<string, CSS2DObject> = new Map<string, CSS2DObject>();
+	htmlSlices2D: Map<string, CSS2DObject> = new Map<string, CSS2DObject>();
 	css2DRender: CSS2DRenderer = new CSS2DRenderer();
+	htmlSlices3D: Map<string, CSS3DObject> = new Map<string, CSS3DObject>();
+	css3DRender: CSS2DRenderer = new CSS3DRenderer();
 
 	// Audio components
 	private audioListener: THREE.AudioListener | null = null;
@@ -58,10 +60,18 @@ export class VenusRenderer {
 	constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene) {
 		this.renderer = renderer;
 		this.scene = scene;
+    
 		this.css2DRender.setSize(renderer.domElement.width, renderer.domElement.height);
 		this.css2DRender.domElement.style.position = "absolute";
+		this.css2DRender.domElement.style.pointerEvents = "none";
 		this.css2DRender.domElement.style.top = "0px";
 		renderer.domElement.parentElement!.appendChild(this.css2DRender.domElement);
+
+		this.css3DRender.setSize(renderer.domElement.width, renderer.domElement.height);
+		this.css3DRender.domElement.style.position = "absolute";
+		this.css3DRender.domElement.style.pointerEvents = "none";
+		this.css3DRender.domElement.style.top = "0px";
+		renderer.domElement.parentElement!.appendChild(this.css3DRender.domElement);
 	}
 
 	//===============================
@@ -207,23 +217,42 @@ export class VenusRenderer {
 	//===============================
 	// SECTION: Html slices
 	//===============================
-	public addHtmlSlice = (key: string, css2DObj: CSS2DObject) => {
-		if (this.htmlSlices.get(key)) throw new Error(`key already used for html slice ${key}`);
-		this.htmlSlices.set(key, css2DObj);
+	public addHtmlSlice2D = (key: string, css2DObj: CSS2DObject) => {
+		if (this.htmlSlices2D.get(key)) throw new Error(`key already used for html slice ${key}`);
+		this.htmlSlices2D.set(key, css2DObj);
 		this.scene!.add(css2DObj);
 	};
 
-	public getHtmlSlice = (key: string) => {
-		const css2DObj = this.htmlSlices.get(key);
+	public getHtmlSlice2D = (key: string) => {
+		const css2DObj = this.htmlSlices2D.get(key);
 		if (!css2DObj) throw new Error(`can't find html slice with key ${key}`);
 		return css2DObj;
 	};
 
-	public removeHtmlSlice = (key: string) => {
-		const css2DObj = this.htmlSlices.get(key);
+	public removeHtmlSlice2D = (key: string) => {
+		const css2DObj = this.htmlSlices2D.get(key);
 		if (!css2DObj) throw new Error(`no html slice with name ${key}`);
-		this.htmlSlices.delete(key);
+		this.htmlSlices2D.delete(key);
 		this.scene!.remove(css2DObj);
+	};
+
+	public addHtmlSlice3D = (key: string, css3DObj: CSS3DObject) => {
+		if (this.htmlSlices3D.get(key)) throw new Error(`key already used for html slice ${key}`);
+		this.htmlSlices3D.set(key, css3DObj);
+		this.scene!.add(css3DObj);
+	};
+
+	public getHtmlSlice3D = (key: string) => {
+		const css3DObj = this.htmlSlices3D.get(key);
+		if (!css3DObj) throw new Error(`can't find html slice with key ${key}`);
+		return css3DObj;
+	};
+
+	public removeHtmlSlice3D = (key: string) => {
+		const css3DObj = this.htmlSlices3D.get(key);
+		if (!css3DObj) throw new Error(`no html slice with name ${key}`);
+		this.htmlSlices3D.delete(key);
+		this.scene!.remove(css3DObj);
 	};
 	//===============================
 	// !SECTION: Html slices
