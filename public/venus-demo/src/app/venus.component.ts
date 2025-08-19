@@ -78,7 +78,9 @@ export class VenusComponent implements OnInit {
         beforeRender: (_) => {
           cube.obj!.position.x = Math.sin(this.renderer!.getTimeFromStart());
           css2DObj.element.innerHTML = `
-            <p style='color:red'>cube position is ${cube.obj?.position.x.toFixed(2)},  ${cube.obj?.position.y},  ${cube.obj?.position.z}</p>
+            <p style="color:red">cube position is ${cube.obj?.position.x.toFixed(
+              2
+            )},  ${cube.obj?.position.y},  ${cube.obj?.position.z}</p>
           `;
         },
       };
@@ -86,10 +88,10 @@ export class VenusComponent implements OnInit {
 
       const div = document.createElement('div');
       div.innerHTML = `
-        <p style='color:red'>cube position is ${cube.obj?.position.x},  ${cube.obj?.position.y},  ${cube.obj?.position.z}</p>
+        <p style="color:red">cube position is ${cube.obj?.position.x},  ${cube.obj?.position.y},  ${cube.obj?.position.z}</p>
       `;
       const css2DObj = new CSS2DObject(div);
-      this.renderer.addHtmlSlice('cubePositionLabel', css2DObj);
+      this.renderer.addHtmlSlice2D('cubePositionLabel', css2DObj);
       css2DObj.position.set(0, 4, 0);
     }
   }

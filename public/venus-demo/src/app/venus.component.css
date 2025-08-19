@@ -27,3 +27,7 @@
 #venus-rendered-container:first-child {
   border: 1px solid black;
 }
+
+.cube-label {
+  background-color: white !important;
+}
