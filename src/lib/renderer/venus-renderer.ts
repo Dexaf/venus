@@ -60,7 +60,7 @@ export class VenusRenderer {
 	constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene) {
 		this.renderer = renderer;
 		this.scene = scene;
-    
+
 		this.css2DRender.setSize(renderer.domElement.width, renderer.domElement.height);
 		this.css2DRender.domElement.style.position = "absolute";
 		this.css2DRender.domElement.style.pointerEvents = "none";
@@ -79,6 +79,8 @@ export class VenusRenderer {
 	//===============================
 	public setSize = (width: number, height: number) => {
 		this.renderer.setSize(width, height);
+		this.css2DRender.setSize(width, height);
+		this.css3DRender.setSize(width, height);
 	};
 
 	public getCanvas = () => {
