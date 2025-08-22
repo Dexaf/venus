@@ -45,6 +45,8 @@ export class VenusRenderer {
         //===============================
         this.setSize = (width, height) => {
             this.renderer.setSize(width, height);
+            this.css2DRender.setSize(width, height);
+            this.css3DRender.setSize(width, height);
         };
         this.getCanvas = () => {
             return this.renderer.domElement;
